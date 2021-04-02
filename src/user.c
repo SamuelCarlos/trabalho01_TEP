@@ -21,12 +21,13 @@ int signUp() {
     User user;
 
     printf("Digite o nome do usuario: ");
-
     getchar();
-    while(scanf("%c", &temp) != '\n')
+
+    pointer = (char* ) calloc(1, sizeof(char));
+
+    while((temp = getchar()) != '\n')
     {
         if(isAlphanumeric(temp)) {
-            pointer = (char* ) calloc(1, sizeof(char));
             pointer2 = pointer;
             if(count > 0) {
                 pointer2 = (char* ) realloc(pointer2, (count + 1) * sizeof(char));
@@ -34,7 +35,7 @@ int signUp() {
             pointer2[count] = temp;
 
             pointer = pointer2;
-            free(pointer2);
+
 
             count++;
         }else{
@@ -42,6 +43,8 @@ int signUp() {
         }
     }
     count = 0;
+
+    printf("%d", error);
 
     if(error) {
         free(pointer);
@@ -63,19 +66,18 @@ int signUp() {
 
     printf("Digite a senha: ");
 
-    while(scanf("%c", &temp) != '\n')
+    pointer = (char* ) calloc(1, sizeof(char));
+
+    while((temp = getchar()) != '\n')
     {
         if(isAlphanumeric(temp)) {
-            pointer = (char* ) calloc(1, sizeof(char));
             pointer2 = pointer;
             if(count > 0) {
                 pointer2 = (char* ) realloc(pointer2, (count + 1) * sizeof(char));
             }
             pointer2[count] = temp;
 
-            free(pointer);
             pointer = pointer2;
-            free(pointer2);
 
             count++;
         }else{
@@ -92,19 +94,17 @@ int signUp() {
     user.password = pointer;
     free(pointer);
 
-    while(scanf("%c", &temp) != '\n')
+    pointer = (char* ) calloc(1, sizeof(char));
+    while((temp = getchar()) != '\n')
     {
         if(isAlphanumeric(temp)) {
-            pointer = (char* ) calloc(1, sizeof(char));
             pointer2 = pointer;
             if(count > 0) {
                 pointer2 = (char* ) realloc(pointer2, (count + 1) * sizeof(char));
             }
             pointer2[count] = temp;
 
-            free(pointer);
             pointer = pointer2;
-            free(pointer2);
 
             count++;
         }else{
@@ -114,6 +114,7 @@ int signUp() {
     count = 0;
 
     if(strcmp(user.password, pointer) != 0) {
+        free(pointer);
         free(user.login);
         free(user.password);
         return -3;
@@ -150,16 +151,17 @@ User readUserFromFile(int column, char *value, int *userCount) {
                 pointer2 = (char* ) realloc(pointer2, (count + 1) * sizeof(char));
             }
             pointer2[count] = temp;
-
-            free(pointer);
+            
             pointer = pointer2;
-            free(pointer2);
 
             count++;
         }
         count = 0;
         
-        if(temp == EOF) break;
+        if(temp == EOF){ 
+            free(pointer);
+            break;
+        };
 
         row = (char** ) calloc(3, sizeof(char*));
 
