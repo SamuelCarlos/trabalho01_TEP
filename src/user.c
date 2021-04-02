@@ -21,7 +21,7 @@ int signUp() {
     User user;
 
     printf("Digite o nome do usuario: ");
-    getchar();
+    temp = getchar();
 
     pointer = (char* ) calloc(1, sizeof(char));
 
@@ -36,15 +36,12 @@ int signUp() {
 
             pointer = pointer2;
 
-
             count++;
         }else{
             error = 1;
         }
     }
     count = 0;
-
-    printf("%d", error);
 
     if(error) {
         free(pointer);
@@ -141,11 +138,12 @@ User readUserFromFile(int column, char *value, int *userCount) {
     };
     user.id = 1;
 
+    pointer = (char* ) calloc(1, sizeof(char));
+
     do {
-        while(fscanf(users, "%c", &temp) != '\n')
+        while((temp = fgetc(users))!= '\n')
         {
             if(temp == EOF) break;
-            pointer = (char* ) calloc(1, sizeof(char));
             pointer2 = pointer;
             if(count > 0) {
                 pointer2 = (char* ) realloc(pointer2, (count + 1) * sizeof(char));
@@ -157,6 +155,8 @@ User readUserFromFile(int column, char *value, int *userCount) {
             count++;
         }
         count = 0;
+
+        printf("%s\n", pointer);
         
         if(temp == EOF){ 
             free(pointer);
@@ -164,6 +164,7 @@ User readUserFromFile(int column, char *value, int *userCount) {
         };
 
         row = (char** ) calloc(3, sizeof(char*));
+
 
         token = strtok(pointer, ",");
         row[array_parser] = token;
@@ -175,8 +176,6 @@ User readUserFromFile(int column, char *value, int *userCount) {
             array_parser++;
         }
 
-        free(token);
-        free(pointer);
         array_parser = 0;
 
         if(strcmp(value, row[column]) == 0) {
@@ -186,9 +185,6 @@ User readUserFromFile(int column, char *value, int *userCount) {
             found = 1;
         }
 
-        for (i = 0; i < 3; i++){
-            free(row[i]);
-        }
         free(row);
 
         user.id++;

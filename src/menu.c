@@ -4,12 +4,14 @@
 void startMenu(){
     int option, response;
     int verificator = 1;
+    int trash;
 
     do{
+        // trash = system("clear");
         printf("1. Login\n2. Cadastro\n3. Sair\n");
         if( scanf("%d", &option) ){
            
-            int buff = system("clear");
+            trash = system("clear");
 
             switch(option) {
                 case(1):
