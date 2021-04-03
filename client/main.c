@@ -4,6 +4,7 @@
 
 int main(void){
 
+    int trash = system("clear");
     startMenu();
     
     return 0;

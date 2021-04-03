@@ -21,10 +21,9 @@ int signUp() {
     User user;
 
     printf("Digite o nome do usuario: ");
-    temp = getchar();
+    getchar();
 
     pointer = (char* ) calloc(1, sizeof(char));
-
     while((temp = getchar()) != '\n')
     {
         if(isAlphanumeric(temp)) {
@@ -41,30 +40,34 @@ int signUp() {
             error = 1;
         }
     }
+    if(!count) error = 1;
     count = 0;
 
     if(error) {
         free(pointer);
         return -2;
     };
+
+    printf("name: %s\n", pointer);
     
     user = readUserFromFile(1, pointer, &userCount);
-    if(user.id == -1) {
-        user.id = userCount;
-        user.login = pointer;
-    };
-    free(pointer);
 
     if(user.id > 0) {
-        free(user.login);
-        free(user.password);
+        free(pointer);
         return -1;
     }
+
+    if(user.id == -1) {
+        user.id = userCount;
+        user.login = (char* ) calloc(strlen(pointer), sizeof(char));
+        strcpy(user.login, pointer);
+    };
+
+    free(pointer);
 
     printf("Digite a senha: ");
 
     pointer = (char* ) calloc(1, sizeof(char));
-
     while((temp = getchar()) != '\n')
     {
         if(isAlphanumeric(temp)) {
@@ -73,51 +76,56 @@ int signUp() {
                 pointer2 = (char* ) realloc(pointer2, (count + 1) * sizeof(char));
             }
             pointer2[count] = temp;
-
             pointer = pointer2;
-
             count++;
         }else{
             error = 1;
         }
     }
+    if(!count) error = 1;
     count = 0;
 
     if(error) {
         free(pointer);
+        free(user.login);
         return -2;
     }
 
-    user.password = pointer;
+    user.password = (char* ) calloc(strlen(pointer), sizeof(char));                         // FREE IT!
+    printf("teste de senha: %s\n", pointer);
+    strcpy(user.password, pointer);
     free(pointer);
+
+    printf("Repita a senha: ");
 
     pointer = (char* ) calloc(1, sizeof(char));
     while((temp = getchar()) != '\n')
-    {
-        if(isAlphanumeric(temp)) {
-            pointer2 = pointer;
-            if(count > 0) {
-                pointer2 = (char* ) realloc(pointer2, (count + 1) * sizeof(char));
-            }
-            pointer2[count] = temp;
-
-            pointer = pointer2;
-
-            count++;
-        }else{
-            error = 1;
+    { 
+        pointer2 = pointer;
+        if(count > 0) {
+            pointer2 = (char* ) realloc(pointer2, (count + 1) * sizeof(char));
         }
+        pointer2[count] = temp;
+        pointer = pointer2;
+        count++;
     }
-    count = 0;
+
+    printf("digite a senha: %s\nrepita a senha: %s\n", user.password, pointer);
 
     if(strcmp(user.password, pointer) != 0) {
         free(pointer);
         free(user.login);
         free(user.password);
         return -3;
-    }
+    }   
+
+    user.deleted = 0;
+
+    printf("ID: %d\nLOGIN: %s\nPASSWORD: %s\nDELETED: %d\n", user.id, user.login, user.password, user.deleted);
 
     writeUserOnFile(user);
+
+    free(pointer);
 
     return user.id;
 }   
@@ -138,9 +146,9 @@ User readUserFromFile(int column, char *value, int *userCount) {
     };
     user.id = 1;
 
-    pointer = (char* ) calloc(1, sizeof(char));
 
     do {
+        pointer = (char* ) calloc(1, sizeof(char));
         while((temp = fgetc(users))!= '\n')
         {
             if(temp == EOF) break;
@@ -155,8 +163,6 @@ User readUserFromFile(int column, char *value, int *userCount) {
             count++;
         }
         count = 0;
-
-        printf("%s\n", pointer);
         
         if(temp == EOF){ 
             free(pointer);
@@ -166,19 +172,23 @@ User readUserFromFile(int column, char *value, int *userCount) {
         row = (char** ) calloc(3, sizeof(char*));
 
 
-        token = strtok(pointer, ",");
+        token = strtok_r(pointer, ",", &pointer);
         row[array_parser] = token;
         array_parser++;
 
         while( token != NULL ) {
-            token = strtok(NULL, ",");
+            if(token == NULL) break;
+            token = strtok_r(NULL, ",", &pointer);
+            if(array_parser <= 2)
+            {
             row[array_parser] = token;
             array_parser++;
+            }
         }
 
         array_parser = 0;
 
-        if(strcmp(value, row[column]) == 0) {
+        if(strcmp(value, row[column - 1]) == 0) {
             user.login = row[0];
             user.password = row[1];
             user.deleted = atoi(row[2]);
@@ -186,22 +196,23 @@ User readUserFromFile(int column, char *value, int *userCount) {
         }
 
         free(row);
+        free(pointer2);
 
         user.id++;
     } while(!found);
     
+    *userCount = user.id;
     if(temp == EOF) {
         user.id = -1;
     }
 
     fclose(users);
-    *userCount = user.id;
     return user;
 }
 
 void writeUserOnFile(User user){
     FILE *users;
-    users = fopen("./data/users.csv","w");
+    users = fopen("./data/users.csv","a");
     
     fprintf(users, "%s,%s,%d\n", user.login, user.password, user.deleted);
 
