@@ -17,23 +17,19 @@ int signUp() {
     int error = 0;
     int userCount;
     char temp;
-    char *pointer, *pointer2;
+    char *login, *password;
     User user;
 
     printf("Digite o nome do usuario: ");
-    getchar();
 
-    pointer = (char* ) calloc(1, sizeof(char));
+    login = (char* ) calloc(1, sizeof(char));
     while((temp = getchar()) != '\n')
     {
         if(isAlphanumeric(temp)) {
-            pointer2 = pointer;
             if(count > 0) {
-                pointer2 = (char* ) realloc(pointer2, (count + 1) * sizeof(char));
+                login = (char* ) realloc(login, (count + 1) * sizeof(char));
             }
-            pointer2[count] = temp;
-
-            pointer = pointer2;
+            login[count] = temp;
 
             count++;
         }else{
@@ -44,39 +40,35 @@ int signUp() {
     count = 0;
 
     if(error) {
-        free(pointer);
+        free(login);
         return -2;
     };
-
-    printf("name: %s\n", pointer);
     
-    user = readUserFromFile(1, pointer, &userCount);
+    user = readUserFromFile(1, login, &userCount);
 
     if(user.id > 0) {
-        free(pointer);
+        free(login);
         return -1;
     }
 
     if(user.id == -1) {
         user.id = userCount;
-        user.login = (char* ) calloc(strlen(pointer), sizeof(char));
-        strcpy(user.login, pointer);
+        user.login = (char* ) calloc(strlen(login), sizeof(char));
+        strcpy(user.login, login);
     };
 
-    free(pointer);
+    free(login);
 
     printf("Digite a senha: ");
 
-    pointer = (char* ) calloc(1, sizeof(char));
+    password = (char* ) calloc(1, sizeof(char));
     while((temp = getchar()) != '\n')
     {
         if(isAlphanumeric(temp)) {
-            pointer2 = pointer;
             if(count > 0) {
-                pointer2 = (char* ) realloc(pointer2, (count + 1) * sizeof(char));
+                password = (char* ) realloc(password, (count + 1) * sizeof(char));
             }
-            pointer2[count] = temp;
-            pointer = pointer2;
+            password[count] = temp;
             count++;
         }else{
             error = 1;
@@ -86,34 +78,28 @@ int signUp() {
     count = 0;
 
     if(error) {
-        free(pointer);
+        free(password);
         free(user.login);
         return -2;
     }
 
-    user.password = (char* ) calloc(strlen(pointer), sizeof(char));                         // FREE IT!
-    printf("teste de senha: %s\n", pointer);
-    strcpy(user.password, pointer);
-    free(pointer);
+    user.password = (char* ) calloc(strlen(password), sizeof(char));                        
+    strcpy(user.password, password);
+    free(password);
 
     printf("Repita a senha: ");
 
-    pointer = (char* ) calloc(1, sizeof(char));
+    count = 0;
     while((temp = getchar()) != '\n')
     { 
-        pointer2 = pointer;
-        if(count > 0) {
-            pointer2 = (char* ) realloc(pointer2, (count + 1) * sizeof(char));
+        if(user.password[count]){
+            if(temp != user.password[count]) error = 1;
         }
-        pointer2[count] = temp;
-        pointer = pointer2;
         count++;
     }
 
-    printf("digite a senha: %s\nrepita a senha: %s\n", user.password, pointer);
-
-    if(strcmp(user.password, pointer) != 0) {
-        free(pointer);
+    if(count < strlen(user.password)) error = 1;
+    if(error) {
         free(user.login);
         free(user.password);
         return -3;
@@ -121,11 +107,7 @@ int signUp() {
 
     user.deleted = 0;
 
-    printf("ID: %d\nLOGIN: %s\nPASSWORD: %s\nDELETED: %d\n", user.id, user.login, user.password, user.deleted);
-
     writeUserOnFile(user);
-
-    free(pointer);
 
     return user.id;
 }   

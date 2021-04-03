@@ -8,12 +8,13 @@ void startMenu(){
 
     do{
         printf("1. Login\n2. Cadastro\n3. Sair\n");
-        if( scanf("%d", &option) ){
+        if(option = getchar()){
+            getchar();
            
             trash = system("clear");
 
             switch(option) {
-                case(1):
+                case('1'):
                     response = signIn();
                     if(response > 0) {
                         mainMenu(response); 
@@ -31,7 +32,7 @@ void startMenu(){
                         }
                     }
                     break;
-                case(2):
+                case('2'):
                     response = signUp();
                     if(response > 0) {
                         mainMenu(response); 
@@ -52,8 +53,11 @@ void startMenu(){
                         }
                     }
                     break;
-                default:
+                case('3'):
                     verificator = 0;
+                    break;
+                default:
+                    printf("Entrada invalida.\n");
                     break;
             }
         }
