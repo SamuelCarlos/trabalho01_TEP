@@ -174,8 +174,9 @@ Movie getMovieByID(int id)
 
         size = 0;
         len = getline(&pointer, &size, movies);
+        if(len == -1) break;
 
-        printf("%li\n", size);
+        printf("%d\n", len);
 
         if(movie.id == id) {
             row = (char** ) calloc(5, sizeof(char*));
@@ -227,6 +228,7 @@ int showMovie(Movie* movies, int optionNumber, int user_id) {
     Movie movie;
     int i = 0, trash, end = 0;
     int isValidOption = 1;
+    int optionSize;
     char temp;
     char* option;
 
@@ -235,24 +237,29 @@ int showMovie(Movie* movies, int optionNumber, int user_id) {
             printf("O que deseja fazer?\n1: Assistir\n2: Voltar\n");
 
             do {
-                if(!isValidOption){
+                if(!isValidOption)
+                {
                     printf("Digite uma opcao valida: ");
                     isValidOption = 1;  
                 }
-                option = (char* ) calloc(1, sizeof(char));
+
+                optionSize = 10;
+                option = (char* ) calloc(optionSize, sizeof(char));
                 i = 0;
-                while((temp = getchar()) != '\n'){
-                    if(!isNumber(temp) && i > 0) isValidOption = 0;
-        
+                while((temp = getchar()) != '\n')
+                {
+                    if(!isNumber(temp)) isValidOption = 0;
+                    if((i + 1) == optionSize) 
+                    {
+                        optionSize *= 2;
+                        option = (char* ) realloc(option, optionSize * sizeof(char));
+                    }
                     option[i] = temp;
+                    option[i + 1] = '\0';
                     i++;
-                    option = (char* ) realloc(option, (i + 1) * sizeof(char));
                 }
             } while(!isValidOption);
 
-            printf("option: %s\n", option);
-
-          
             optionNumber = atoi(option);
             switch (optionNumber)
             {
@@ -279,22 +286,58 @@ void printMovieMetadata(Movie movie) {
 
 void watchMovie(int user_id, int movie_id) {
     int day, month, year;
+    int isValidOption = 1, i = 0;
+    int optionSize;
     char temp;
+    char *option;
     float user_avaliation;
 
     printf("Digite sua nota para o filme: ");
-    while(!scanf(" %f\n", &user_avaliation)){
-        printf("Digite uma nota no formato x.x: ");
-    };
-    
+    do {
+        if(!isValidOption)
+        {
+            printf("Digite uma opcao valida: ");
+            isValidOption = 1;  
+        }
+
+        optionSize = 10;
+        option = (char* ) calloc(optionSize, sizeof(char));
+        i = 0;
+        while((temp = getchar()) != '\n')
+        {
+            if(i <= 4) {
+                if(!isNumber(temp)) 
+                {
+                    if (temp != '.') isValidOption = 0;
+
+                    if (i > 2) isValidOption = 0;
+                }
+
+                if((i + 1) == optionSize) 
+                {
+                    optionSize *= 2;
+                    option = (char* ) realloc(option, optionSize * sizeof(char));
+                }
+
+                option[i] = temp;
+                option[i + 1] = '\0';
+                i++;
+
+                if(isValidOption && atof(option) > 10) isValidOption = 0;
+            }
+        }
+    } while(!isValidOption);
+
+    user_avaliation = atof(option);
+
     printf("Data de quando assistiu.\n");
     do{
         printf("Digite uma data valida e no formato (dd/mm/aaaa): ");
-        while(scanf("%d/%d/%d\n", &day, &month, &year) != 3){
+        while(scanf("%d/%d/%d", &day, &month, &year) != 3){
+            getchar();
             printf("Digite uma data valida e no formato (dd/mm/aaaa): ");
         } 
     }while(!verifyValidDate(day, month, year));
-
 
 }
 

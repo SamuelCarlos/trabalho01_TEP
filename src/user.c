@@ -12,20 +12,25 @@ int signIn() {
     int count = 0;
     int error = 0;
     int userCount;
+    int inputSize;
     char temp;
     char *login, *password;
     User user;
 
     printf("Login: ");
 
-    login = (char* ) calloc(1, sizeof(char));
+    inputSize = 10;
+    login = (char* ) calloc(inputSize, sizeof(char));
     while((temp = getchar()) != '\n')
     {
         if(isAlphanumeric(temp)) {
-            if(count > 0) {
-                login = (char* ) realloc(login, (count + 1) * sizeof(char));
+            if((count + 1) == inputSize) {
+                inputSize *= 2;
+                login = (char* ) realloc(login, inputSize * sizeof(char));
             }
+
             login[count] = temp;
+            login[count + 1] = '\0';
 
             count++;
         }else{
@@ -81,30 +86,31 @@ int signUp() {
     int count = 0;
     int error = 0;
     int userCount;
+    int inputSize;
     char temp;
     char *login, *password;
     User user;
 
     printf("Digite o nome do usuario: ");
 
-    login = (char* ) calloc(1, sizeof(char));
+    inputSize = 10;
+    login = (char* ) calloc(inputSize, sizeof(char));
     while((temp = getchar()) != '\n')
     {
         if(isAlphanumeric(temp)) {
-            if(count > 0) {
-                login = (char* ) realloc(login, (count + 1) * sizeof(char));
+            if((count + 1) == inputSize) {
+                inputSize *= 2;
+                login = (char* ) realloc(login, inputSize * sizeof(char));
             }
             login[count] = temp;
+            login[count + 1] = '\0';
 
             count++;
         }else{
             error = 1;
         }
     }
-
     if(!count) error = 1;
-    login = (char* ) realloc(login, (count + 1) * sizeof(char));
-    login[count] = '\0';
     count = 0;
 
     if(error) {
@@ -129,24 +135,23 @@ int signUp() {
 
     printf("Digite a senha: ");
 
-    password = (char* ) calloc(1, sizeof(char));
+    inputSize = 10;
+    password = (char* ) calloc(inputSize, sizeof(char));
     while((temp = getchar()) != '\n')
     {
         if(isAlphanumeric(temp)) {
-            if(count > 0) {
-                password = (char* ) realloc(password, (count + 1) * sizeof(char));
+            if((count + 1) == inputSize) {
+                inputSize *= 2;
+                password = (char* ) realloc(password, inputSize * sizeof(char));
             }
             password[count] = temp;
+            password[count + 1] = '\0';
             count++;
         }else{
             error = 1;
         }
     }
     if(!count) error = 1;
-    
-    password = (char* ) realloc(password, (count + 1) * sizeof(char));
-    password[count] = '\0';
-
     count = 0;
 
     if(error) {
@@ -161,7 +166,6 @@ int signUp() {
 
     printf("Repita a senha: ");
 
-    count = 0;
     while((temp = getchar()) != '\n')
     { 
         if(user.password[count]){
@@ -204,29 +208,10 @@ User readUserFromFile(int column, char *value, int *userCount) {
     user.id = 1;
 
     do {
-        // pointer = (char* ) calloc(1, sizeof(char));
-        // while((temp = fgetc(users)) != '\n')
-        // {
-        //     if(temp == EOF) break;
-        //     pointer2 = pointer;
-        //     if(count > 0) {
-        //         pointer2 = (char* ) realloc(pointer2, (count + 1) * sizeof(char));
-        //     }
-        //     pointer2[count] = temp;
-            
-        //     pointer = pointer2;
-
-        //     count++;
-        // }
-        // count = 0;
-        
-        // if(temp == EOF){ 
-        //     free(pointer);
-        //     break;
-        // };
-
         size = 0;
         len = getline(&pointer, &size, users);
+
+        if(len == -1) break;
 
         row = (char** ) calloc(3, sizeof(char*));
 
@@ -247,10 +232,10 @@ User readUserFromFile(int column, char *value, int *userCount) {
         array_parser = 0;
 
         if(strcmp(value, row[column - 1]) == 0) {
-            user.login = (char* ) calloc(strlen(row[0]), sizeof(char));
+            user.login = (char* ) calloc(strlen(row[0]) + 1, sizeof(char));
             strcpy(user.login, row[0]);
 
-            user.password = (char* ) calloc(strlen(row[1]), sizeof(char));
+            user.password = (char* ) calloc(strlen(row[1]) + 1, sizeof(char));
             strcpy(user.password, row[1]);
 
             user.deleted = atoi(row[2]);
@@ -266,7 +251,7 @@ User readUserFromFile(int column, char *value, int *userCount) {
     } while(!found);
     
     *userCount = user.id;
-    if(temp == EOF) {
+    if(!found) {
         user.id = -1;
     }
 
