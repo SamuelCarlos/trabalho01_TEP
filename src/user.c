@@ -38,6 +38,7 @@ int signIn() {
         }
     }
     if(!count) error = 1;
+    login = (char* ) realloc(login, (count + 1 ) * sizeof(char));
     count = 0;
     
     if(error) {
@@ -46,13 +47,11 @@ int signIn() {
     };
 
     user = readUserFromFile(1, login, &userCount);
+    free(login);
 
     if(user.id == -1) {
-        free(login);
         return 0;
     }
-
-    free(login);
 
     printf("Digite a senha: ");
 
@@ -197,7 +196,7 @@ User readUserFromFile(int column, char *value, int *userCount) {
     int count = 0, found = 0, array_parser = 0;
     long unsigned int size;
     char temp;
-    char *pointer, *token;
+    char *pointer, *pointer2, *token;
     char **row;
 
     users = fopen("./data/users.csv","r");
@@ -213,6 +212,8 @@ User readUserFromFile(int column, char *value, int *userCount) {
 
         if(len == -1) break;
 
+        pointer2 = pointer;
+
         row = (char** ) calloc(3, sizeof(char*));
 
         token = strtok_r(pointer, ",", &pointer);
@@ -220,7 +221,11 @@ User readUserFromFile(int column, char *value, int *userCount) {
         array_parser++;
 
         while( token != NULL ) {
-            if(token == NULL) break;
+            if(token == NULL) 
+            {
+                free(row);
+                break;
+            }
             token = strtok_r(NULL, ",", &pointer);
             if(array_parser <= 2)
             {
@@ -244,12 +249,13 @@ User readUserFromFile(int column, char *value, int *userCount) {
         }
     
         free(row);
-
+        free(pointer2);
         if(found) break;
 
         user.id++;
     } while(!found);
-    
+
+
     *userCount = user.id;
     if(!found) {
         user.id = -1;

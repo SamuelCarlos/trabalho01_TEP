@@ -137,7 +137,7 @@ Movie getMovieByID(int id)
     int count = 0, found = 0, array_parser = 0, len;
     long unsigned int size;
     char temp;
-    char *pointer, *token;
+    char *pointer, *pointer2, *token;
     char **row;
 
     movies = fopen("./data/movies.csv","r");
@@ -171,16 +171,17 @@ Movie getMovieByID(int id)
         //     free(pointer2);
         //     break;
         // };
-
+        
+        pointer = (char* ) calloc(0, sizeof(char));
         size = 0;
         len = getline(&pointer, &size, movies);
         if(len == -1) break;
 
-        printf("%d\n", len);
+        pointer2 = pointer;
 
         if(movie.id == id) {
-            row = (char** ) calloc(5, sizeof(char*));
 
+            row = (char** ) calloc(5, sizeof(char*));
 
             token = strtok_r(pointer, ",", &pointer);
             row[array_parser] = token;
@@ -212,11 +213,13 @@ Movie getMovieByID(int id)
             found = 1;
         }
 
+        free(pointer2);
         if(found) break;
 
         movie.id++;
     } while(!found);
     
+    // free(pointer);
     if(temp == EOF) {
         movie.id = -1;
     }
