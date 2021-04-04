@@ -1,15 +1,19 @@
 #include "menu.h"
 #include "user.h"
+#include "movie.h"
 
 void startMenu(){
-    int option, response;
+    int response;
     int verificator = 1;
     int trash;
+    char temp;
+    char option;
 
     do{
         printf("1. Login\n2. Cadastro\n3. Sair\n");
-        if(option = getchar()){
-            getchar();
+        if(option = getchar())
+        {
+            while((temp = getchar()) != '\n'){};
            
             trash = system("clear");
 
@@ -21,6 +25,9 @@ void startMenu(){
                         verificator = 0;
                     }else{
                         switch (response) {
+                            case(-2):
+                                printf("Login ou Senha errados.\n");
+                                break;
                             case(-1): 
                                 printf("Senha incorreta.\n");
                                 break;
@@ -65,5 +72,39 @@ void startMenu(){
 }
 
 void mainMenu(int user_id) {
-    printf("%d", user_id);
+    int response;
+    int verificator = 1;
+    int trash;
+    char temp;
+    char option;
+
+    trash = system("clear");
+
+    do{
+        printf("1. Listar Filmes\n2. Meu Perfil\n3. Procurar Filme\n4. Sair\n");
+        if(option = getchar()){
+            while((temp = getchar()) != '\n'){};
+           
+            trash = system("clear");
+
+            switch(option) {
+                case('1'):
+                    listTenMovies(user_id);
+
+                    break;
+                case('2'):
+                   
+                    break;
+                case('3'):
+                   
+                    break;
+                case('4'):
+                    verificator = 0;
+                    break;
+                default:
+                    printf("Entrada invalida.\n");
+                    break;
+            }
+        }
+    }while(verificator);
 }
