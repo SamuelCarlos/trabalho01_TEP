@@ -1,6 +1,10 @@
 #ifndef MOVIE_H
 #define MOVIE_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 typedef struct {
     int id;           // user id (from 1 to infinite)
     char *title;
@@ -17,6 +21,11 @@ typedef struct {
 */
 Movie getMovieByID(int id);
 
+Movie *getMovieMatches(char *string, int *movieCount);
+
+
+int showMovie(Movie movie, int user_id);
+
 /*
 @brief this function is made just for organization, it will
 ask for a movie name and query movies file searching for a
@@ -27,9 +36,14 @@ void findAndListMovies();
 /*
 @brief query movies file and list ten movies starting from given 
 page to keep console screen clean;
-@param int page: page >= 1, it's the param who tells what ten movies
-are about to be printed;
 */
-void listTenMovies(int page);
+void listTenMovies(int user_id);
+
+/*
+@brief print all movie metadata;
+*/
+void printMovieMetadata(Movie movie);
+
+void searchMovie(int user_id);
 
 #endif //movie_h

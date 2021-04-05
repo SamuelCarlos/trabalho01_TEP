@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "watched.h": "c",
+        "utils.h": "c",
+        "stdlib.h": "c"
+    }
+}

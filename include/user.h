@@ -23,7 +23,8 @@ User readUserFromFile(int column, char *value, int *userCount);
 /*
 @brief organizate the sign-in process nesting all funcionalities
 needed to login an user;
-@return -1: conflict (already existent user)
+@return -2: error    (login or password impossible)
+        -1: conflict (wrong password)
          0: null     (not existent user)
         >0: user id  (actual user)
 */
@@ -39,12 +40,6 @@ needed to create a new user account;
 */
 int signUp();
 
-/*
-@brief verifies if an given char is alphanumeric
-@return 1: alphanumeric
-        0: not alphanumeric
-*/
-int isAlphanumeric(char c);
 
 /*
 @brief query users file and write a new user on last position;

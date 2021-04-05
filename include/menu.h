@@ -7,6 +7,6 @@ code as clean as possible;
 */
 void mainMenu(int user_id);
 void startMenu();
-void personalMenu();
+void personalMenu(int user_id);
 
 #endif //menu_h
