@@ -1,4 +1,5 @@
 #include "watched.h"
+#include "movie.h"
 
 void writeNewWatched(Watched watched) {
     FILE * watches;
@@ -53,7 +54,7 @@ void showHistory(int user_id){
         if(option == "D"){
             sortWatchedByDate(history, manyWatched);
         }else if(option == "N"){
-            sortWatchedByAvaliation(history, manyWatched);
+            //sortWatchedByAvaliation(history, manyWatched);
         }
 
         free(option);
@@ -147,17 +148,52 @@ Watched *getUserHistory(int user_id, int *manyWatched){
 }
 
 void sortWatchedByDate(Watched *watched, int manyWatched){
-    int i, j, k;
+    int i, j;
     Watched aux;
     Watched *temp;
+    Movie movie;
 
     temp = (Watched*) calloc(manyWatched,sizeof(Watched));
 
-    for(i = 0; i < manyWatched; i++){
-        for(j = 0; j < manyWatched; j++){
-            for(k = 0; k < manyWatched - 1; k++){
+    temp = watched;
 
+    //sort by year
+    for(i = 1; i < manyWatched; i++){
+        for(j = 0; j < manyWatched - i; j++){
+            if(temp[j].year < temp[j + 1].year){
+                aux = temp[j];
+                temp[j] = temp[j + 1];
+                temp[j + 1] = aux;
             }
         }
+    }
+
+    //sort by month
+    for(i = 1; i < manyWatched; i++){
+        for(j = 0; j < manyWatched - i; j++){
+            if(temp[j].month < temp[j + 1].month){
+                aux = temp[j];
+                temp[j] = temp[j + 1];
+                temp[j + 1] = aux;
+            }
+        }
+    }
+
+    //sort by day
+    for(i = 1; i < manyWatched; i++){
+        for(j = 0; j < manyWatched - i; j++){
+            if(temp[j].day < temp[j + 1].day){
+                aux = temp[j];
+                temp[j] = temp[j + 1];
+                temp[j + 1] = aux;
+            }
+        }
+    }
+
+    printf("Meu historico:\n");
+
+    for(i = 1; i < manyWatched; i++){
+        movie = getMovieByID(temp->id);
+        printf("\t%d/%d/%d - %s: %f\n",temp->day,temp->month,temp->year,movie.title,temp->user_avaliation);
     }
 }
