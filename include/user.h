@@ -40,12 +40,6 @@ needed to create a new user account;
 */
 int signUp();
 
-/*
-@brief verifies if an given char is alphanumeric
-@return 1: alphanumeric
-        0: not alphanumeric
-*/
-int isAlphanumeric(char c);
 
 /*
 @brief query users file and write a new user on last position;

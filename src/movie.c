@@ -1,13 +1,7 @@
 #include "movie.h"
 #include "watched.h"
+#include "utils.h"
 
-int isNumber(char c) {
-    if (c >= '0' && c <= '9'){ 
-        return 1; 
-    } else {
-        return 0;
-    }
-}
 
 void listTenMovies(int user_id)
 {
@@ -15,6 +9,7 @@ void listTenMovies(int user_id)
     int error = 0;
     int trash;
     int movieQnt;
+    int inputSize;
     int actualPage = 0;
     int verificator = 1;
     int optionNumber;
@@ -28,18 +23,14 @@ void listTenMovies(int user_id)
 
     do {
         do {
-            movies = (Movie* ) calloc(1, sizeof(Movie));
+            movies = (Movie* ) calloc(10, sizeof(Movie));
             j = 0;
             movieQnt = 0;
 
             for (i = (actualPage * 10 + 1); i < (actualPage + 1) * 10; i++) 
             {
-                if(movieQnt > 0){
-                    movies = (Movie* ) realloc(movies, (j + 1) * sizeof(Movie));
-                }
                 movies[j] = getMovieByID(i);
 
-                // printf("Pegou o filme: %d\n", movie.id);
 
                 if(movies[j].id == -2) {
                     printf("Erro ao ler arquivo.\n");
@@ -51,27 +42,34 @@ void listTenMovies(int user_id)
                     break;
                 }
 
-                // printf("ALOCOU CERTINHO O FILME: %d\n", movies[j].id);
                 movieQnt++;
                 j++;
             }
-            if(error) break;
+            if(error) 
+            { 
+                free(movies);
+                break;
+            }
 
+            if(movieQnt < 9) movies = (Movie* ) realloc(movies, movieQnt * sizeof(Movie));
+            
             printf("_____________________________________________________\n");
+            printf("|  ID |   Titulo                                    |\n"); 
+            printf("|-----|---------------------------------------------|\n");
 
             for (i = 0; i < movieQnt; i++){
                 printf("| %d  |   %s\n", movies[i].id, movies[i].title);
             }
 
-            printf("_____________________________________________________\n");
+            printf("______|______________________________________________\n");
 
-            if(actualPage > 0 && !end) {
+            if((actualPage > 0) && !end) {
                 printf("| < A |           voltar ao menu: 0           | M > |\n");
-            }else if (actualPage == 0 && !end){
+            }else if ((actualPage == 0) && !end){
                 printf("|                 voltar ao menu: 0           | M > |\n");
-            }else if(actualPage > 0 && end) {
+            }else if((actualPage > 0) && end) {
                 printf("| < A |           voltar ao menu: 0                 |\n");
-            }else if(actualPage == 0 && end) {
+            }else if((actualPage == 0) && end) {
                 printf("|                 voltar ao menu: 0                 |\n");
             }
             printf("-----------------------------------------------------\n");
@@ -83,14 +81,20 @@ void listTenMovies(int user_id)
                     printf("Digite uma opcao valida: ");
                     isValidOption = 1;  
                 }
-                option = (char* ) calloc(1, sizeof(char));
+                inputSize = 10;
+                option = (char* ) calloc(inputSize, sizeof(char));
                 i = 0;
                 while((temp = getchar()) != '\n'){
                     if(!isNumber(temp) && i > 0) isValidOption = 0;
-        
+
+                    if((i + 1) == inputSize) 
+                    {
+                        inputSize *= 2;
+                        option = (char* ) realloc(option, inputSize * sizeof(char));
+                    }
                     option[i] = temp;
+                    option[i + 1] = '\0';
                     i++;
-                    option = (char* ) realloc(option, (i + 1) * sizeof(char));
                 }
             } while(!isValidOption);
 
@@ -107,7 +111,7 @@ void listTenMovies(int user_id)
                     verificator = 0;
 
                     trash = system("clear");
-                    end = showMovie(movies, optionNumber, user_id);
+                    end = showMovie(movies[(optionNumber % 10) - 1], user_id);
                 }
             }
 
@@ -115,8 +119,8 @@ void listTenMovies(int user_id)
                 free(movies[i].title);
                 free(movies[i].description);
             }
-            free(movies);
 
+            free(movies);
             free(option);
 
             trash = system("clear");
@@ -133,11 +137,9 @@ Movie getMovieByID(int id)
 {
     FILE *movies;
     Movie movie;
-    int i;
-    int count = 0, found = 0, array_parser = 0, len;
+    int i, found = 0, array_parser = 0, len, length;
     long unsigned int size;
-    char temp;
-    char *pointer, *token;
+    char *pointer, *pointer2, *token;
     char **row;
 
     movies = fopen("./data/movies.csv","r");
@@ -149,38 +151,19 @@ Movie getMovieByID(int id)
     movie.id = 1;
 
     do {
-        // pointer = (char* ) calloc(1, sizeof(char));
-        // while((temp = fgetc(movies)) != '\n')
-        // {
-        //     if(temp == EOF) break;
-           
-        //     if(count > 0) {
-        //         pointer = (char* ) realloc(pointer, (count + 1) * sizeof(char));
-        //     }
-        //     pointer[count] = temp;
-
-        //     pointer2 = pointer;
-
-        //     count++;
-        // }
-        // pointer = (char* ) realloc(pointer, (count + 1) * sizeof(char));
-        // pointer[count] = '\0';
-        // count = 0;
-
-        // if(temp == EOF){ 
-        //     free(pointer2);
-        //     break;
-        // };
-
         size = 0;
         len = getline(&pointer, &size, movies);
-        if(len == -1) break;
+        if(len == -1){
+            free(pointer);
+            break;
+        }
+        pointer[len] = '\0';
 
-        printf("%d\n", len);
+        pointer2 = pointer;
 
         if(movie.id == id) {
-            row = (char** ) calloc(5, sizeof(char*));
 
+            row = (char** ) calloc(5, sizeof(char*));
 
             token = strtok_r(pointer, ",", &pointer);
             row[array_parser] = token;
@@ -198,99 +181,202 @@ Movie getMovieByID(int id)
             if(!token) token = strtok_r(NULL, "\"", &pointer);  
             row[4] = token;
 
-            movie.title = (char* ) calloc(strlen(row[0]), sizeof(char));
-            strcpy(movie.title, row[0]);
+            length = strlen(row[0]) + 1;
+            movie.title = (char* ) calloc(length, sizeof(char));
+            movie.title = strdup(row[0]);
 
             movie.year = atoi(row[1]);
             movie.duration = atoi(row[2]);
             movie.avaliation = atof(row[3]);
 
-            movie.description = (char* ) calloc(strlen(row[4]), sizeof(char));
-            strcpy(movie.description, row[4]);
-
-            free(row);
+            length = strlen(row[4]) + 1;
+            movie.description = (char* ) calloc(length, sizeof(char));
+            movie.description = strdup(row[4]);
+        
             found = 1;
+            free(row);
         }
-
+     
+        free(pointer2);
         if(found) break;
 
         movie.id++;
     } while(!found);
-    
-    if(temp == EOF) {
+ 
+    if(!found) {
         movie.id = -1;
     }
     fclose(movies);
     return movie;
 }
 
-int showMovie(Movie* movies, int optionNumber, int user_id) {
+Movie *getMovieMatches(char *string, int *movieCount) {
+    FILE *movies;
     Movie movie;
+    Movie *matches;
+    int i, end = 0, count = 0, found = 0, array_parser = 0, len, length;
+    long unsigned int size;
+    char *pointer, *pointer2, *token, *uppercasedString, *uppercasedString2;
+    char **row;
+
+    movies = fopen("./data/movies.csv","r");
+
+    matches = (Movie* ) calloc((count + 1) , sizeof(movie));
+
+    if (movies == NULL) {
+        matches[0].id = -2;
+        return matches;
+    }
+
+    movie.id = 1;
+    *movieCount = 1; 
+
+    do {
+        size = 0;
+        len = getline(&pointer, &size, movies);
+        if(len == -1){ 
+            free(pointer);
+            break;
+        }
+        pointer[len] = '\0';
+
+        pointer2 = pointer;
+        
+        row = (char** ) calloc(5, sizeof(char*));
+
+        token = strtok_r(pointer, ",", &pointer);
+        row[array_parser] = token;
+        array_parser++;
+
+        for(i = 1; i < 4; i++) {
+            if(token == NULL) break;
+            
+            token = strtok_r(NULL, ",", &pointer);
+            row[array_parser] = token;
+            array_parser++;
+        }
+        array_parser = 0;
+
+        token = strtok_r(pointer, "\"", &pointer);
+        if(!token) token = strtok_r(NULL, "\"", &pointer);  
+        row[4] = token;
+
+        length = strlen(row[0]) + 1;
+        movie.title = (char* ) calloc(length, sizeof(char));
+        movie.title = strdup(row[0]);
+
+        movie.year = atoi(row[1]);
+        movie.duration = atoi(row[2]);
+        movie.avaliation = atof(row[3]);
+
+        length = strlen(row[4]) + 1;
+        movie.description = (char* ) calloc(length, sizeof(char));
+        movie.description = strdup(row[4]);
+    
+        free(row);
+        free(pointer2);
+
+        uppercasedString = toUpperString(movie.title);
+        uppercasedString2 = toUpperString(string);
+
+        if(strstr(uppercasedString, uppercasedString2) != NULL) {
+            found = 1;
+            if(count > 0) matches = (Movie* ) realloc(matches, (count + 1) * sizeof(Movie));
+            matches[count] = movie;
+            count++;
+        }else{
+            free(movie.title);
+            free(movie.description);
+        }
+
+        free(uppercasedString);
+        free(uppercasedString2);
+
+        movie.id++;
+    }while(!end);
+
+    if(!found) {
+        matches[0].id = -1;
+    }
+
+    *movieCount = count;
+
+    fclose(movies);
+    return matches;
+}
+
+int showMovie(Movie movie, int user_id) {
     int i = 0, trash, end = 0;
     int isValidOption = 1;
     int optionSize;
+    int optionNumber;
     char temp;
     char* option;
+  
+    printMovieMetadata(movie);
+    printf("\t               O que deseja fazer?\n\n\t               1: Assistir\n\t               2: Voltar\n\t            -> ");
 
-    movie = movies[(optionNumber % 10) - 1];
-            printMovieMetadata(movie);
-            printf("O que deseja fazer?\n1: Assistir\n2: Voltar\n");
+    do {
+        if(!isValidOption)
+        {
+            printf("Digite uma opcao valida: ");
+            isValidOption = 1;  
+        }
 
-            do {
-                if(!isValidOption)
-                {
-                    printf("Digite uma opcao valida: ");
-                    isValidOption = 1;  
-                }
-
-                optionSize = 10;
-                option = (char* ) calloc(optionSize, sizeof(char));
-                i = 0;
-                while((temp = getchar()) != '\n')
-                {
-                    if(!isNumber(temp)) isValidOption = 0;
-                    if((i + 1) == optionSize) 
-                    {
-                        optionSize *= 2;
-                        option = (char* ) realloc(option, optionSize * sizeof(char));
-                    }
-                    option[i] = temp;
-                    option[i + 1] = '\0';
-                    i++;
-                }
-            } while(!isValidOption);
-
-            optionNumber = atoi(option);
-            switch (optionNumber)
+        optionSize = 10;
+        option = (char* ) calloc(optionSize, sizeof(char));
+        i = 0;
+        while((temp = getchar()) != '\n')
+        {
+            if(!isNumber(temp)) isValidOption = 0;
+            if((i + 1) == optionSize) 
             {
-            case (1):
-                watchMovie(user_id, movie.id);
-                printf("assistido");
-                end = 1;
-                break;
-            case (2):
-                    
-                break;
-            default:
-                break;
+                optionSize *= 2;
+                option = (char* ) realloc(option, optionSize * sizeof(char));
             }
+            option[i] = temp;
+            option[i + 1] = '\0';
+            i++;
+        }
+    } while(!isValidOption);
 
-            free(option);
-            trash = system("clear");
-            return end;
+    optionNumber = atoi(option);
+    free(option);
+    
+    switch (optionNumber)
+    {
+    case (1):
+        watchMovie(user_id, movie.id);
+        end = 1;
+        break;
+    case (2):
+                    
+        break;
+    default:
+        break;
+    }
+
+    trash = system("clear");
+    return end;
 }
 
 void printMovieMetadata(Movie movie) {
-    printf("Titulo: %s\nAno: %d\nDuracao (min): %d\nNota: %.1f\nDescricao: %s\n\n", movie.title, movie.year, movie.duration, movie.avaliation, movie.description);
+    printf("\n\t       Titulo: %s\n", movie.title);
+    printf("\t          Ano: %d\n", movie.year);
+    printf("\t      Duracao: %d min\n", movie.duration);
+    printf("\t         Nota: %.2f\n", movie.avaliation);
+    printf("\t    Descricao: %s\n", movie.description);
 }
 
 void watchMovie(int user_id, int movie_id) {
-    int day, month, year;
     int isValidOption = 1, i = 0;
     int optionSize;
     char temp;
     char *option;
-    float user_avaliation;
+    Watched watched;
+
+    watched.user_id = user_id;
+    watched.movie_id = movie_id;
 
     printf("Digite sua nota para o filme: ");
     do {
@@ -328,63 +414,133 @@ void watchMovie(int user_id, int movie_id) {
         }
     } while(!isValidOption);
 
-    user_avaliation = atof(option);
+    watched.user_avaliation = atof(option);
+
+    free(option);
 
     printf("Data de quando assistiu.\n");
     do{
         printf("Digite uma data valida e no formato (dd/mm/aaaa): ");
-        while(scanf("%d/%d/%d", &day, &month, &year) != 3){
+        while(scanf("%d/%d/%d", &watched.day, &watched.month, &watched.year) != 3){
             getchar();
             printf("Digite uma data valida e no formato (dd/mm/aaaa): ");
         } 
-    }while(!verifyValidDate(day, month, year));
+        getchar();
+    }while(!verifyValidDate(watched.day, watched.month, watched.year));
 
+    writeNewWatched(watched);
 }
 
-int verifyValidDate(int day, int month, int year) {
-    if(year > 0){
-        if(month >= 1 && month <= 12) {
-            if(day >= 1 && day <= daysOnMonth(month, year)) {
-                return 1;
-            } 
-            return 0;
-        }
-        return 0;
-    }
-    return 0;
-}
+void searchMovie(int user_id) {
+    int inputSize, i, trash;
+    int movieCount, isValidOption = 1;
+    char temp;
+    char *input;
+    Movie *matches;
 
-int daysOnMonth(int month, int year)
-{
-    if ((month == 1) || (month == 3) || (month == 5) || (month == 7) || (month == 8) || (month == 10) || (month == 12))
+    printf("\t__________________________________\n");
+    printf("\t|                                |\n");
+    printf("\t|    Digite o nome do filme: ");
+
+    inputSize = 10;
+    input = (char* ) calloc(inputSize, sizeof(char));
+    i = 0;
+    while ((temp = getchar()) != '\n') 
     {
-        return 31;
+        if(i + 1 == inputSize) 
+        {
+            inputSize *= 2;
+            input = (char* ) realloc(input, inputSize * sizeof(char));
+        }
+
+        input[i] = temp;
+        input[i + 1] = '\0';
+        i++;
     }
-    else if (month == 2)
+
+    trash = system("clear");
+
+    matches = getMovieMatches(input, &movieCount);
+
+    free(input);
+
+    if(matches[0].id == -2) 
     {
-        if (leapYear(year))
-        {
-            return 29;
-        }
-        else
-        {
-            return 28;
-        }
+        printf("\t__________________________________\n");
+        printf("\t|       Erro ao ler filmes       |\n");
+        printf("\t|--------------------------------|\n");
+        printf("\t|      Digite 1 para voltar      |\n");
+        printf("\t|--------------------------------|\n");
+    }
+    else if(matches[0].id == -1)
+    {
+        printf("\t__________________________________\n");
+        printf("\t|   Nenhum resultado encontrado  |\n");
+        printf("\t|--------------------------------|\n");
+        printf("\t|      Digite 1 para voltar      |\n");
+        printf("\t|--------------------------------|\n");
     }
     else
     {
-        return 30;
+        printf("\t__________________________________\n");
+        printf("\t|     Resultados encontrados:    |\n");
+        printf("\t|--------------------------------|\n");
+        for(i = 0; i < movieCount; i++) {
+            printf("\t| %d |   %s\n", matches[i].id, matches[i].title);
+        }
+        printf("\t|--------------------------------|\n");
+        printf("\t|    Digite o ID do filme ou     |\n");
+        printf("\t|         1 para voltar:         |\n");
+        printf("\t|--------------------------------|\n");
     }
-}
 
-int leapYear(int year)
-{
-    if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)
-    {
-        return 1;
+    do {
+        printf("\t|-> ");
+        isValidOption = 1;
+        inputSize = 10;
+        input = (char* ) calloc(inputSize, sizeof(char));
+        i = 0;
+        while ((temp = getchar()) != '\n') 
+        {
+            if(i + 1 == inputSize) 
+            {
+                inputSize *= 2;
+                input = (char* ) realloc(input, inputSize * sizeof(char));
+            }
+
+            if(!isAlphanumeric(temp)) isValidOption = 0;
+            if(isAlphanumeric(temp) && !isNumber(temp)) isValidOption = 0;
+
+            input[i] = temp;
+            input[i + 1] = '\0';
+            i++;
+        }
+        if(!input[0]) isValidOption = 0;
+        printf("ENTRADA: %d\n", atoi(input));
+        if(!isValidOption) 
+        {
+            free(input);
+        }
+    }while(!isValidOption);
+
+    trash = system("clear");
+    switch(atoi(input)) {
+        case (1):
+            break;
+        default:
+            for(i = 0; i < movieCount; i++){
+                if(matches[i].id == atoi(input)) 
+                {
+                    showMovie(matches[i], user_id);
+                    break;
+                }
+            }
+            break;
     }
-    else
-    {
-        return 0;
+    for(i = 0; i < movieCount; i++) {
+        free(matches[i].title);
+        free(matches[i].description);
     }
+    free(matches);
+    free(input);
 }

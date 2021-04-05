@@ -1,12 +1,18 @@
 #ifndef WATCHED_H
 #define WATCHED_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 typedef struct {
     int id;           // user id (from 1 to infinite)
     int user_id;
     int movie_id;
     float user_avaliation;
-    char *created_at;
+    int day;
+    int month;
+    int year;
 } Watched;
 
 /*
@@ -40,7 +46,7 @@ Watched *filterByAvaliation(Watched *all_watched);
 */
 void watchMovie(int user_id, int movie_id);
 
-void writeNewWatched(int user_id, int movie_id);
+void writeNewWatched(Watched watched);
 
 
 #endif //watched_h

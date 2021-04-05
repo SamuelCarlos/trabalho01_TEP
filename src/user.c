@@ -1,12 +1,6 @@
 #include "user.h"
+#include "utils.h"
 
-int isAlphanumeric(char c) {
-    if((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')){
-        return 1;
-    } else {
-        return 0;
-    }
-}
 
 int signIn() {
     int count = 0;
@@ -17,7 +11,9 @@ int signIn() {
     char *login, *password;
     User user;
 
-    printf("Login: ");
+    printf("\t__________________________\n");
+    printf("\t|                        |\n");
+    printf("\t|        Login: ");
 
     inputSize = 10;
     login = (char* ) calloc(inputSize, sizeof(char));
@@ -46,15 +42,13 @@ int signIn() {
     };
 
     user = readUserFromFile(1, login, &userCount);
+    free(login);
 
     if(user.id == -1) {
-        free(login);
         return 0;
     }
 
-    free(login);
-
-    printf("Digite a senha: ");
+    printf("\t|        Senha: ");
 
     while((temp = getchar()) != '\n')
     {
@@ -91,7 +85,10 @@ int signUp() {
     char *login, *password;
     User user;
 
-    printf("Digite o nome do usuario: ");
+    printf("\t__________________________\n");
+    printf("\t|                        |\n");
+    printf("\t|    Digite o nome       |\n");
+    printf("\t|       do usuario: ");
 
     inputSize = 10;
     login = (char* ) calloc(inputSize, sizeof(char));
@@ -127,13 +124,15 @@ int signUp() {
 
     if(user.id == -1) {
         user.id = userCount;
-        user.login = (char* ) calloc(strlen(login), sizeof(char));
+        user.login = (char* ) calloc(strlen(login) + 1, sizeof(char));
         strcpy(user.login, login);
+        user.login[strlen(login) + 1] = '\0';
     };
     
     free(login);
 
-    printf("Digite a senha: ");
+    printf("\t|   Digite a senha: ");
+
 
     inputSize = 10;
     password = (char* ) calloc(inputSize, sizeof(char));
@@ -160,11 +159,12 @@ int signUp() {
         return -2;
     }
 
-    user.password = (char* ) calloc(strlen(password), sizeof(char));                        
+    user.password = (char* ) calloc(strlen(password) + 1, sizeof(char));                        
     strcpy(user.password, password);
+    user.password[strlen(password) + 1] = '\0';
     free(password);
 
-    printf("Repita a senha: ");
+    printf("\t|   Repita a senha: ");
 
     while((temp = getchar()) != '\n')
     { 
@@ -197,7 +197,7 @@ User readUserFromFile(int column, char *value, int *userCount) {
     int count = 0, found = 0, array_parser = 0;
     long unsigned int size;
     char temp;
-    char *pointer, *token;
+    char *pointer, *pointer2, *token;
     char **row;
 
     users = fopen("./data/users.csv","r");
@@ -210,8 +210,14 @@ User readUserFromFile(int column, char *value, int *userCount) {
     do {
         size = 0;
         len = getline(&pointer, &size, users);
+        if(len == -1)
+        {
+            free(pointer); 
+            break;
+        }
+        pointer[len] = '\0';
 
-        if(len == -1) break;
+        pointer2 = pointer;
 
         row = (char** ) calloc(3, sizeof(char*));
 
@@ -220,7 +226,11 @@ User readUserFromFile(int column, char *value, int *userCount) {
         array_parser++;
 
         while( token != NULL ) {
-            if(token == NULL) break;
+            if(token == NULL) 
+            {
+                free(row);
+                break;
+            }
             token = strtok_r(NULL, ",", &pointer);
             if(array_parser <= 2)
             {
@@ -233,10 +243,10 @@ User readUserFromFile(int column, char *value, int *userCount) {
 
         if(strcmp(value, row[column - 1]) == 0) {
             user.login = (char* ) calloc(strlen(row[0]) + 1, sizeof(char));
-            strcpy(user.login, row[0]);
+            user.login = strdup(row[0]);
 
             user.password = (char* ) calloc(strlen(row[1]) + 1, sizeof(char));
-            strcpy(user.password, row[1]);
+            user.password = strdup(row[1]);
 
             user.deleted = atoi(row[2]);
 
@@ -244,12 +254,13 @@ User readUserFromFile(int column, char *value, int *userCount) {
         }
     
         free(row);
-
+        free(pointer2);
         if(found) break;
 
         user.id++;
     } while(!found);
-    
+
+
     *userCount = user.id;
     if(!found) {
         user.id = -1;
