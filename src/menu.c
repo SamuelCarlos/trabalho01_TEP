@@ -1,6 +1,7 @@
 #include "menu.h"
 #include "user.h"
 #include "movie.h"
+#include "watched.h"
 
 void startMenu(){
     int response;
@@ -166,6 +167,7 @@ void personalMenu(int user_id) {
 
             switch(option) {
                 case('1'):
+                    showHistory(user_id);
                     break;
                 case('2'):
                     break;

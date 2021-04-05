@@ -222,7 +222,7 @@ Movie *getMovieMatches(char *string, int *movieCount) {
 
     movies = fopen("./data/movies.csv","r");
 
-    matches = (Movie* ) calloc((count + 1) , sizeof(movie));
+    matches = (Movie* ) calloc((count + 1) , sizeof(Movie));
 
     if (movies == NULL) {
         matches[0].id = -2;
@@ -230,7 +230,6 @@ Movie *getMovieMatches(char *string, int *movieCount) {
     }
 
     movie.id = 1;
-    *movieCount = 1; 
 
     do {
         size = 0;

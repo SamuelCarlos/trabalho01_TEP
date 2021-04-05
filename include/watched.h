@@ -23,21 +23,21 @@ date and user avaliation;
 filter by avaliation);
 @return array of Watched with all Watched movies by the user;
 */
-Watched *listAllWatched(int user_id, char filter);
+void showHistory(int user_id);
 
 /*
 @brief filter the search result by date;
 @param Watched *all_watched: list of all watched movies;
 @return filtered by date array of Watched;
 */
-Watched *filterByDate(Watched *all_watched);
+void sortWatchedByDate(Watched *watched, int manyWatched);
 
 /*
 @brief filter the search result by user avaliations;
 @param Watched *all_watched: list of all watched movies;
 @return filtered by avaliation array of Watched;
 */
-Watched *filterByAvaliation(Watched *all_watched);
+void sortWatchedByAvaliation(Watched *watched, int manyWatched);
 
 /*
 @brief write a new watched movie on watched file;
@@ -47,6 +47,16 @@ Watched *filterByAvaliation(Watched *all_watched);
 void watchMovie(int user_id, int movie_id);
 
 void writeNewWatched(Watched watched);
+
+Watched *getUserHistory(int user_id, int *manyWatched);
+
+
+
+
+
+
+
+
 
 
 #endif //watched_h
