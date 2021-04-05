@@ -99,6 +99,7 @@ void listTenMovies(int user_id)
             } while(!isValidOption);
 
             if(strcmp(option, "A") == 0 && actualPage > 0) {
+                if(end) end = 0;
                 actualPage--;
             }else if(strcmp(option, "M") == 0 && !end){
                 actualPage++;
@@ -516,7 +517,7 @@ void searchMovie(int user_id) {
             i++;
         }
         if(!input[0]) isValidOption = 0;
-        printf("ENTRADA: %d\n", atoi(input));
+        
         if(!isValidOption) 
         {
             free(input);
