@@ -20,6 +20,8 @@ typedef struct {
 */
 User readUserFromFile(int column, char *value, int *userCount);
 
+User getUserById(int id);
+
 /*
 @brief organizate the sign-in process nesting all funcionalities
 needed to login an user;
@@ -28,7 +30,7 @@ needed to login an user;
          0: null     (not existent user)
         >0: user id  (actual user)
 */
-int signIn();
+int signIn(const int verbosity);
 
 /*
 @brief organizate the sign-up process nesting all funcionalities
@@ -38,7 +40,7 @@ needed to create a new user account;
         -1: conflict (already existent user)
         >0: user id  (actual user)
 */
-int signUp();
+int signUp(const int verbosity);
 
 
 /*
@@ -53,5 +55,7 @@ with "0" value;
 @param int user_id: user id key for querying at users file;
 */
 void deleteUser(int user_id);
+
+void createUsuariosFile();
 
 #endif //user_h

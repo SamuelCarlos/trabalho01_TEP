@@ -23,8 +23,7 @@ Movie getMovieByID(int id);
 
 Movie *getMovieMatches(char *string, int *movieCount);
 
-
-int showMovie(Movie movie, int user_id);
+int showMovie(const int verbosity, Movie movie, int user_id);
 
 /*
 @brief this function is made just for organization, it will
@@ -37,13 +36,13 @@ void findAndListMovies();
 @brief query movies file and list ten movies starting from given 
 page to keep console screen clean;
 */
-void listTenMovies(int user_id);
+void listTenMovies(const int verbosity, int user_id);
 
 /*
 @brief print all movie metadata;
 */
 void printMovieMetadata(Movie movie);
 
-void searchMovie(int user_id);
+void searchMovie(const int verbosity, int user_id);
 
 #endif //movie_h

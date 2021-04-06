@@ -44,7 +44,7 @@ void sortWatchedByAvaliation(Watched *watched, int manyWatched);
 @param int user_id: user info to add on file;
 @param int movie_id: movie info to add on file;
 */
-void watchMovie(int user_id, int movie_id);
+void watchMovie(const int verbosity, int user_id, int movie_id);
 
 void writeNewWatched(Watched watched);
 

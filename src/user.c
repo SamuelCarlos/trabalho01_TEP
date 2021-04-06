@@ -1,8 +1,8 @@
 #include "user.h"
 #include "utils.h"
+#include "watched.h"
 
-
-int signIn() {
+int signIn(const int verbosity) {
     int count = 0;
     int error = 0;
     int userCount;
@@ -11,9 +11,9 @@ int signIn() {
     char *login, *password;
     User user;
 
-    printf("\t__________________________\n");
-    printf("\t|                        |\n");
-    printf("\t|        Login: ");
+    if(verbosity) printf("\t__________________________\n");
+    if(verbosity) printf("\t|                        |\n");
+    if(verbosity) printf("\t|        Login: ");
 
     inputSize = 10;
     login = (char* ) calloc(inputSize, sizeof(char));
@@ -48,7 +48,7 @@ int signIn() {
         return 0;
     }
 
-    printf("\t|        Senha: ");
+    if(verbosity) printf("\t|        Senha: ");
 
     while((temp = getchar()) != '\n')
     {
@@ -76,7 +76,7 @@ int signIn() {
 
 }
 
-int signUp() {  
+int signUp(const int verbosity) {  
     int count = 0;
     int error = 0;
     int userCount;
@@ -85,10 +85,10 @@ int signUp() {
     char *login, *password;
     User user;
 
-    printf("\t__________________________\n");
-    printf("\t|                        |\n");
-    printf("\t|    Digite o nome       |\n");
-    printf("\t|       do usuario: ");
+    if(verbosity) printf("\t__________________________\n");
+    if(verbosity) printf("\t|                        |\n");
+    if(verbosity) printf("\t|    Digite o nome       |\n");
+    if(verbosity) printf("\t|       do usuario: ");
 
     inputSize = 10;
     login = (char* ) calloc(inputSize, sizeof(char));
@@ -131,7 +131,7 @@ int signUp() {
     
     free(login);
 
-    printf("\t|   Digite a senha: ");
+    if(verbosity) printf("\t|   Digite a senha: ");
 
 
     inputSize = 10;
@@ -164,7 +164,7 @@ int signUp() {
     user.password[strlen(password) + 1] = '\0';
     free(password);
 
-    printf("\t|   Repita a senha: ");
+    if(verbosity) printf("\t|   Repita a senha: ");
 
     while((temp = getchar()) != '\n')
     { 
@@ -241,7 +241,8 @@ User readUserFromFile(int column, char *value, int *userCount) {
 
         array_parser = 0;
 
-        if(strcmp(value, row[column - 1]) == 0) {
+        // teste
+        if(strcmp(value, row[column - 1]) == 0 && atoi(row[2]) == 0) {
             user.login = (char* ) calloc(strlen(row[0]) + 1, sizeof(char));
             user.login = strdup(row[0]);
 
@@ -270,7 +271,77 @@ User readUserFromFile(int column, char *value, int *userCount) {
     return user;
 }
 
-void writeUserOnFile(User user){
+User getUserById(int id) {
+    FILE *users;
+    User user;
+    int i, found = 0, array_parser = 0, len, length;
+    long unsigned int size;
+    char *pointer, *pointer2, *token;
+    char **row;
+
+    users = fopen("./data/users.csv","r");
+    if (users == NULL) {
+        user.id = -2;
+        return user;
+    }
+
+    user.id = 1;
+
+    do {
+        size = 0;
+        len = getline(&pointer, &size, users);
+        if(len == -1){
+            free(pointer);
+            break;
+        }
+        pointer[len] = '\0';
+
+        pointer2 = pointer;
+
+        if(user.id == id) {
+
+            row = (char** ) calloc(3, sizeof(char*));
+
+            token = strtok_r(pointer, ",", &pointer);
+            row[array_parser] = token;
+            array_parser++;
+
+            for(i = 1; i < 3; i++) {
+                if(token == NULL) break;
+                token = strtok_r(NULL, ",", &pointer);
+                row[array_parser] = token;
+                array_parser++;
+            }
+            array_parser = 0;
+
+            length = strlen(row[0]) + 1;
+            user.login = (char* ) calloc(length, sizeof(char));
+            user.login = strdup(row[0]);
+
+            length = strlen(row[1]) + 1;
+            user.password = (char* ) calloc(length, sizeof(char));
+            user.password = strdup(row[1]);
+
+            user.deleted = atoi(row[2]);
+        
+            found = 1;
+            free(row);
+        }
+     
+        free(pointer2);
+        if(found) break;
+
+        user.id++;
+    } while(!found);
+ 
+    if(!found) {
+        user.id = -1;
+    }
+    fclose(users);
+    return user;
+}
+
+void writeUserOnFile(User user) {
     FILE *users;
     users = fopen("./data/users.csv","a");
     
@@ -279,4 +350,113 @@ void writeUserOnFile(User user){
     free(user.login);
     free(user.password);
     fclose(users);
+}
+
+void deleteUser(int user_id) {
+    FILE *users;
+    User user;
+    int found = 0, len;
+    long unsigned int size;
+    char *pointer, *pointer2;
+
+    users = fopen("./data/users.csv","r+");
+
+    user.id = 1;
+
+    do {
+        size = 0;
+        len = getline(&pointer, &size, users);
+        if(len == -1){
+            free(pointer);
+            break;
+        }
+        pointer[len] = '\0';
+
+        pointer2 = pointer;
+
+        if(user.id == user_id) {
+            
+            fseek( users, -2, SEEK_CUR );
+            fputc('1', users);
+        
+            found = 1;
+        }
+     
+        free(pointer2);
+        if(found) break;
+
+        user.id++;
+    } while(!found);
+    
+    fclose(users);
+}
+
+void createUsuariosFile() {
+    FILE *users;
+    FILE *allWatched;
+    FILE *usuarios;
+    User user;
+    Watched *history;
+    int usersLen, watchedLen, i, manyWatched;
+    long unsigned int usersSize, watchedSize;
+    char *usersPointer, *usersPointer2, *watchedPointer, *watchedPointer2, *token;
+    char **row;
+
+    usuarios = fopen("./data/usuarios.csv", "w");
+    allWatched = fopen("./data/watched.csv", "r");
+    users = fopen("./data/users.csv","r");
+
+    user.id = 1;
+
+    do {
+        usersSize = 0;
+        usersLen = getline(&usersPointer, &usersSize, users);
+        if(usersLen == -1){
+            free(usersPointer);
+            break;
+        } 
+        usersPointer[usersLen] = '\0';
+
+        usersPointer2 = usersPointer;
+
+        row = (char**) calloc(2, sizeof(char*));
+
+        i = 0;
+
+        token = strtok_r(usersPointer, ",", &usersPointer);
+        row[i] = token;
+
+        for(i = 1; i < 3; i++) 
+        {
+            if(token == NULL) break;
+            token = strtok_r(NULL, ",", &usersPointer);
+            row[i] = token;
+        }
+
+        if(atoi(row[2]) == 0) 
+        {
+            fprintf(usuarios, "%s,%s", row[0], row[1]);
+            history = getUserHistory(user.id, &manyWatched);
+
+            if(history[0].id > 0) 
+            {
+                for(i = 0; i < manyWatched; i++) 
+                {
+                    fprintf(usuarios, ",%d,%.2f,%.2d/%.2d/%.4d", history[i].movie_id, history[i].user_avaliation, history[i].day, history[i].month, history[i].year);
+                }
+            }
+
+            free(history);
+            fprintf(usuarios, "\n");
+        }
+
+        free(row);
+        free(usersPointer2);
+
+        user.id++;
+    } while(1);
+
+    fclose(users);
+    fclose(allWatched);
+    fclose(usuarios);
 }

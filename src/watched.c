@@ -1,5 +1,6 @@
 #include "watched.h"
 #include "movie.h"
+#include "user.h"
 
 void writeNewWatched(Watched watched) {
     FILE * watches;
@@ -12,6 +13,7 @@ void writeNewWatched(Watched watched) {
 }
 
 void showHistory(int user_id){
+    User user;
     Watched *history;
     int i, isValidOption, manyWatched;
     char temp,firstEntry;
@@ -19,16 +21,16 @@ void showHistory(int user_id){
     history = getUserHistory(user_id, &manyWatched);
 
     if(history[0].id == -2){
-        printf("Ainda nao existe nenhum registro de historico.\n");
+        printf("\tAinda nao existe nenhum registro de historico.\n");
     }else if(history[0].id == -1){
-        printf("Ainda nao existe nenhum registro de historico para o usuario.\n");
+        printf("\tAinda nao existe nenhum registro de historico para o usuario.\n");
     }else{
 
-        printf("Digite D para ordenar por Data.\n");
-        printf("ou digite N para ordenar por Nota.\n");
+        printf("\tDigite D para ordenar por Data.\n");
+        printf("\tou digite N para ordenar por Nota.\n");
 
         do{
-            printf("-> ");
+            printf("\t-> ");
             isValidOption = 1;
             i = 0;
             while((temp = getchar()) != '\n')
@@ -41,6 +43,14 @@ void showHistory(int user_id){
             if(i == 0) isValidOption = 0;
 
         }while(!isValidOption);
+
+        user = getUserById(user_id);
+
+        printf("\tNome: %s\n", user.login);
+        printf("\tMeu historico:\n");
+
+        free(user.login);
+        free(user.password);
 
         if(firstEntry == 'D'){
             sortWatchedByDate(history, manyWatched);
@@ -138,20 +148,15 @@ Watched *getUserHistory(int user_id, int *manyWatched){
 void sortWatchedByDate(Watched *watched, int manyWatched){
     int i, j;
     Watched aux;
-    Watched *temp;
     Movie movie;
-
-    //temp = (Watched*) calloc(manyWatched,sizeof(Watched));
-
-    temp = watched;
 
     //sort by year
     for(i = 1; i < manyWatched; i++){
         for(j = 0; j < manyWatched - i; j++){
-            if(temp[j].year < temp[j + 1].year){
-                aux = temp[j];
-                temp[j] = temp[j + 1];
-                temp[j + 1] = aux;
+            if(watched[j].year < watched[j + 1].year){
+                aux = watched[j];
+                watched[j] = watched[j + 1];
+                watched[j + 1] = aux;
             }
         }
     }
@@ -159,10 +164,10 @@ void sortWatchedByDate(Watched *watched, int manyWatched){
     //sort by month
     for(i = 1; i < manyWatched; i++){
         for(j = 0; j < manyWatched - i; j++){
-            if(temp[j].month < temp[j + 1].month && temp[j].year == temp[j+1].year){
-                aux = temp[j];
-                temp[j] = temp[j + 1];
-                temp[j + 1] = aux;
+            if(watched[j].month < watched[j + 1].month && watched[j].year == watched[j+1].year){
+                aux = watched[j];
+                watched[j] = watched[j + 1];
+                watched[j + 1] = aux;
             }
         }
     }
@@ -170,19 +175,21 @@ void sortWatchedByDate(Watched *watched, int manyWatched){
     //sort by day
     for(i = 1; i < manyWatched; i++){
         for(j = 0; j < manyWatched - i; j++){
-            if(temp[j].day < temp[j + 1].day && temp[j].month == temp[j + 1].month && temp[j].year == temp[j + 1].year){
-                aux = temp[j];
-                temp[j] = temp[j + 1];
-                temp[j + 1] = aux;
+            if(watched[j].day < watched[j + 1].day && watched[j].month == watched[j + 1].month && watched[j].year == watched[j + 1].year){
+                aux = watched[j];
+                watched[j] = watched[j + 1];
+                watched[j + 1] = aux;
             }
         }
     }
 
-    i=0;
-    printf("Meu historico:\n");
     for(i = 0; i < manyWatched; i++){
-        movie = getMovieByID(temp[i].movie_id);
-        printf("\t%d/%d/%d - %s: %.2f\n",temp[i].day,temp[i].month,temp[i].year,movie.title,temp[i].user_avaliation);
+        movie = getMovieByID(watched[i].movie_id);
+        if(watched[i].user_avaliation < 0){
+        printf("\t%.2d/%.2d/%.4d - %s: Sem avaliacao\n",watched[i].day,watched[i].month,watched[i].year,movie.title);
+        }else{
+        printf("\t%.2d/%.2d/%.4d - %s: %.2f\n",watched[i].day,watched[i].month,watched[i].year,movie.title,watched[i].user_avaliation);
+        }
         free(movie.title);
         free(movie.description);
     }
@@ -193,62 +200,26 @@ void sortWatchedByDate(Watched *watched, int manyWatched){
 void sortWatchedByAvaliation(Watched *watched, int manyWatched){
     int i, j;
     Watched aux;
-    Watched *temp;
     Movie movie;
-
-    //temp = (Watched*) calloc(manyWatched,sizeof(Watched));
-
-    temp = watched;
-
-    //sort by year
-    for(i = 1; i < manyWatched; i++){
-        for(j = 0; j < manyWatched - i; j++){
-            if(temp[j].year < temp[j + 1].year){
-                aux = temp[j];
-                temp[j] = temp[j + 1];
-                temp[j + 1] = aux;
-            }
-        }
-    }
-
-    //sort by month
-    for(i = 1; i < manyWatched; i++){
-        for(j = 0; j < manyWatched - i; j++){
-            if(temp[j].month < temp[j + 1].month && temp[j].year == temp[j+1].year){
-                aux = temp[j];
-                temp[j] = temp[j + 1];
-                temp[j + 1] = aux;
-            }
-        }
-    }
-
-    //sort by day
-    for(i = 1; i < manyWatched; i++){
-        for(j = 0; j < manyWatched - i; j++){
-            if(temp[j].day < temp[j + 1].day && temp[j].month == temp[j + 1].month && temp[j].year == temp[j + 1].year){
-                aux = temp[j];
-                temp[j] = temp[j + 1];
-                temp[j + 1] = aux;
-            }
-        }
-    }
 
     //sort by avaliation
     for(i = 1; i < manyWatched; i++){
         for(j = 0; j < manyWatched - i; j++){
-            if(temp[j].user_avaliation < temp[j + 1].user_avaliation){
-                aux = temp[j];
-                temp[j] = temp[j + 1];
-                temp[j + 1] = aux;
+            if(watched[j].user_avaliation < watched[j + 1].user_avaliation){
+                aux = watched[j];
+                watched[j] = watched[j + 1];
+                watched[j + 1] = aux;
             }
         }
     }
 
-    i=0;
-    printf("Meu historico:\n");
     for(i = 0; i < manyWatched; i++){
-        movie = getMovieByID(temp[i].movie_id);
-        printf("\t%d/%d/%d - %s: %.2f\n",temp[i].day,temp[i].month,temp[i].year,movie.title,temp[i].user_avaliation);
+        movie = getMovieByID(watched[i].movie_id);
+        if(watched[i].user_avaliation < 0){
+            printf("\tSem avaliacao - %s: %.2d/%.2d/%.4d\n", movie.title,watched[i].day,watched[i].month,watched[i].year);
+        }else{
+            printf("\t%.2f - %s: %.2d/%.2d/%.4d\n",watched[i].user_avaliation, movie.title,watched[i].day,watched[i].month,watched[i].year);
+        }
         free(movie.title);
         free(movie.description);
     }

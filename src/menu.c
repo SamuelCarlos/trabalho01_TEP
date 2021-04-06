@@ -3,7 +3,7 @@
 #include "movie.h"
 #include "watched.h"
 
-void startMenu(){
+void startMenu(const int verbosity){
     int response;
     int verificator = 1;
     int trash;
@@ -11,34 +11,37 @@ void startMenu(){
     char option;
 
     do{
-        printf("\t__________________________\n");
-        printf("\t|         UFLIX          |\n");
-        printf("\t|------------------------|\n");
-        printf("\t|                        |\n");
-        printf("\t|       1. Login         |\n");
-        printf("\t|       2. Cadastro      |\n");
-        printf("\t|       3. Sair          |\n");
-        printf("\t|                        |\n");
-        printf("\t|------------------------|\n");
-        printf("\t| Samuel | v1.0 | Bruno  |\n");
-        printf("\t|-------------------------\n");
-        printf("\t|-> ");
+        if(verbosity){
+            printf("\t__________________________\n");
+            printf("\t|         UFLIX          |\n");
+            printf("\t|------------------------|\n");
+            printf("\t|                        |\n");
+            printf("\t|       1. Login         |\n");
+            printf("\t|       2. Cadastro      |\n");
+            printf("\t|       3. Sair          |\n");
+            printf("\t|                        |\n");
+            printf("\t|------------------------|\n");
+            printf("\t| Samuel | v1.0 | Bruno  |\n");
+            printf("\t|-------------------------\n");
+            printf("\t|-> ");
+        }
         if(option = getchar())
         {
             while((temp = getchar()) != '\n'){};
            
-            trash = system("clear");
+            if(verbosity) trash = system("clear");
 
             switch(option) {
                 case('1'):
-                    response = signIn();
+                    response = signIn(verbosity);
                     if(response > 0) {
-                        mainMenu(response); 
+                        mainMenu(verbosity, response); 
                         verificator = 0;
-                    }else{
+                    }else if(verbosity){
                         switch (response) {
                             case(-2):
                                 trash = system("clear");
+                                
                                 printf("\t__________________________\n");
                                 printf("\t| Login ou Senha errados |\n");
                                 break;
@@ -58,11 +61,11 @@ void startMenu(){
                     }
                     break;
                 case('2'):
-                    response = signUp();
+                    response = signUp(verbosity);
                     if(response > 0) {
-                        mainMenu(response); 
+                        mainMenu(verbosity, response); 
                         verificator = 0;
-                    }else{
+                    }else if(verbosity){
                         switch (response) {
                             case(-3): 
                                 trash = system("clear");
@@ -89,94 +92,99 @@ void startMenu(){
                     verificator = 0;
                     break;
                 default:
-                    printf("Entrada invalida.\n");
+                    if(verbosity) printf("Entrada invalida.\n");
                     break;
             }
         }
     }while(verificator);
+    createUsuariosFile();
 }
 
-void mainMenu(int user_id) {
+void mainMenu(const int verbosity, int user_id) {
     int response;
     int verificator = 1;
     int trash;
+    int deleted = 0;
     char temp;
     char option;
 
-    trash = system("clear");
+    if(verbosity) trash = system("clear");
 
     do{
-        printf("\t__________________________________\n");
-        printf("\t|                                |\n");
-        printf("\t|       1. Listar Filmes         |\n");
-        printf("\t|       2. Meu Perfil            |\n");
-        printf("\t|       3. Procurar Filme        |\n");
-        printf("\t|       4. Sair                  |\n");
-        printf("\t|                                |\n");
-        printf("\t|---------------------------------\n");
-        printf("\t|-> ");
+        if(verbosity) printf("\t__________________________________\n");
+        if(verbosity) printf("\t|                                |\n");
+        if(verbosity) printf("\t|       1. Listar Filmes         |\n");
+        if(verbosity) printf("\t|       2. Meu Perfil            |\n");
+        if(verbosity) printf("\t|       3. Procurar Filme        |\n");
+        if(verbosity) printf("\t|       4. Sair                  |\n");
+        if(verbosity) printf("\t|                                |\n");
+        if(verbosity) printf("\t|---------------------------------\n");
+        if(verbosity) printf("\t|-> ");
         if(option = getchar()){
             while((temp = getchar()) != '\n'){};
            
-            trash = system("clear");
+            if(verbosity) trash = system("clear");
 
             switch(option) {
                 case('1'):
-                    listTenMovies(user_id);
+                    listTenMovies(verbosity, user_id);
                     break;
                 case('2'):
-                    personalMenu(user_id);
+                    deleted = personalMenu(verbosity, user_id);
+                    if(deleted) verificator = 0;
                     break;
                 case('3'):
-                    searchMovie(user_id);
+                    searchMovie(verbosity, user_id);
                     break;
                 case('4'):
                     verificator = 0;
                     break;
                 default:
-                    printf("\t__________________________________\n");
-                    printf("\t|        Entrada invalida        |\n");
+                    if(verbosity) printf("\t__________________________________\n");
+                    if(verbosity) printf("\t|        Entrada invalida        |\n");
                     break;
             }
         }
     }while(verificator);
 }
 
-void personalMenu(int user_id) {
+int personalMenu(const int verbosity, int user_id) {
     int response;
     int verificator = 1;
     int trash;
     char temp;
     char option;
 
-    trash = system("clear");
+    if(verbosity) trash = system("clear");
 
     do{
-        printf("\t______________________________\n");
-        printf("\t|                            |\n");
-        printf("\t|       1. Historico         |\n");
-        printf("\t|       2. Excluir conta     |\n");
-        printf("\t|       3. Voltar            |\n");
-        printf("\t|                            |\n");
-        printf("\t|-----------------------------\n");
-        printf("\t|-> ");
+        if(verbosity) printf("\t______________________________\n");
+        if(verbosity) printf("\t|                            |\n");
+        if(verbosity) printf("\t|       1. Historico         |\n");
+        if(verbosity) printf("\t|       2. Excluir conta     |\n");
+        if(verbosity) printf("\t|       3. Voltar            |\n");
+        if(verbosity) printf("\t|                            |\n");
+        if(verbosity) printf("\t|-----------------------------\n");
+        if(verbosity) printf("\t|-> ");
         if(option = getchar()){
             while((temp = getchar()) != '\n'){};
            
-            trash = system("clear");
+            if(verbosity) trash = system("clear");
 
             switch(option) {
                 case('1'):
                     showHistory(user_id);
                     break;
                 case('2'):
+                    deleteUser(user_id);
+                    return 1;
                     break;
                 case('3'):
                     verificator = 0;
                     break;
                 default:
-                    printf("\t______________________________\n");
-                    printf("\t|       Entrada invalida     |\n");
+                    if(verbosity) printf("\t______________________________\n");
+                    if(verbosity) printf("\t|       Entrada invalida     |\n");
                     break;
             }
         }

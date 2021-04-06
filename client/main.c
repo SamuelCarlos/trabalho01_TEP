@@ -2,10 +2,13 @@
 #include <stdlib.h>
 #include "menu.h"
 
-int main(void){
+int main(int argc, char* argv[1]){
+    int trash;
 
-    int trash = system("clear");
-    startMenu();
+    const int verbosity = atoi(argv[1]);
+    if(verbosity) trash = system("clear");
+
+    startMenu(verbosity);
     
     return 0;
 }
