@@ -3,7 +3,7 @@
 #include "utils.h"
 
 
-void listTenMovies(const int verbosity, int user_id)
+void listTenMovies(const int verbosity, const int user_id)
 {
     int end = 0, i, j = 0;
     int error = 0;
@@ -134,7 +134,7 @@ void listTenMovies(const int verbosity, int user_id)
     } while (!end);
 }
 
-Movie getMovieByID(int id)
+Movie getMovieByID(const int id)
 {
     FILE *movies;
     Movie movie;
@@ -305,7 +305,7 @@ Movie *getMovieMatches(char *string, int *movieCount) {
     return matches;
 }
 
-int showMovie(const int verbosity, Movie movie, int user_id) {
+int showMovie(const int verbosity, Movie movie, const int user_id) {
     int i = 0, trash, end = 0;
     int isValidOption = 1;
     int optionSize;
@@ -369,75 +369,7 @@ void printMovieMetadata(Movie movie) {
     printf("\t    Descricao: %s\n", movie.description);
 }
 
-void watchMovie(const int verbosity, int user_id, int movie_id) {
-    int isValidOption = 1, i = 0;
-    int optionSize;
-    char temp;
-    char *option;
-    Watched watched;
-
-    watched.user_id = user_id;
-    watched.movie_id = movie_id;
-
-    if(verbosity) printf("Digite sua nota para o filme: ");
-    do {
-        if(!isValidOption)
-        {
-            free(option);
-            if(verbosity) printf("Digite uma opcao valida: ");
-            isValidOption = 1;  
-        }
-
-        optionSize = 10;
-        option = (char* ) calloc(optionSize, sizeof(char));
-        i = 0;
-        while((temp = getchar()) != '\n')
-        {
-            if(i <= 4) {
-                if(!isNumber(temp)) 
-                {
-                    if (temp != '.') isValidOption = 0;
-
-                    if (i > 2) isValidOption = 0;
-                }
-
-                if((i + 1) == optionSize) 
-                {
-                    optionSize *= 2;
-                    option = (char* ) realloc(option, optionSize * sizeof(char));
-                }
-
-                option[i] = temp;
-                option[i + 1] = '\0';
-                i++;
-
-                if(isValidOption && atof(option) > 10) isValidOption = 0;
-            }
-        }
-    } while(!isValidOption);
-
-    if(i == 0) {
-        watched.user_avaliation = -1;
-    }else{
-        watched.user_avaliation = atof(option);
-    }
-
-    free(option);
-
-    if(verbosity) printf("Data de quando assistiu.\n");
-    do{
-        if(verbosity) printf("Digite uma data valida e no formato (dd/mm/aaaa): ");
-        while(scanf("%d/%d/%d", &watched.day, &watched.month, &watched.year) != 3){
-            while(temp = getchar() != '\n'){};
-            if(verbosity) printf("Digite uma data valida e no formato (dd/mm/aaaa): ");
-        } 
-        getchar();
-    }while(!verifyValidDate(watched.day, watched.month, watched.year));
-
-    writeNewWatched(watched);
-}
-
-void searchMovie(const int verbosity, int user_id) {
+void searchMovie(const int verbosity, const int user_id) {
     int inputSize, i, trash;
     int movieCount, isValidOption = 1;
     char temp;

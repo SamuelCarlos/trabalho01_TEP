@@ -100,7 +100,7 @@ void startMenu(const int verbosity){
     createUsuariosFile();
 }
 
-void mainMenu(const int verbosity, int user_id) {
+void mainMenu(const int verbosity, const int user_id) {
     int response;
     int verificator = 1;
     int trash;
@@ -148,7 +148,7 @@ void mainMenu(const int verbosity, int user_id) {
     }while(verificator);
 }
 
-int personalMenu(const int verbosity, int user_id) {
+int personalMenu(const int verbosity, const int user_id) {
     int response;
     int verificator = 1;
     int trash;

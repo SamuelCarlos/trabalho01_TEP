@@ -271,7 +271,7 @@ User readUserFromFile(int column, char *value, int *userCount) {
     return user;
 }
 
-User getUserById(int id) {
+User getUserById(const int id) {
     FILE *users;
     User user;
     int i, found = 0, array_parser = 0, len, length;

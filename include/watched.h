@@ -23,7 +23,7 @@ date and user avaliation;
 filter by avaliation);
 @return array of Watched with all Watched movies by the user;
 */
-void showHistory(int user_id);
+void showHistory(const int user_id);
 
 /*
 @brief filter the search result by date;
@@ -40,23 +40,26 @@ void sortWatchedByDate(Watched *watched, int manyWatched);
 void sortWatchedByAvaliation(Watched *watched, int manyWatched);
 
 /*
-@brief write a new watched movie on watched file;
+@brief a interface who ask user avaliation and date he watched the movie,
+and then call writeNewWatched;
 @param int user_id: user info to add on file;
 @param int movie_id: movie info to add on file;
 */
-void watchMovie(const int verbosity, int user_id, int movie_id);
+void watchMovie(const int verbosity, const int user_id, const int movie_id);
 
+/*
+@brief write a new watched movie on watched file;
+@param Watched watched: Watched struct with all data needed to print a new
+record on watched file;
+*/
 void writeNewWatched(Watched watched);
 
-Watched *getUserHistory(int user_id, int *manyWatched);
-
-
-
-
-
-
-
-
-
+/*
+@brief query watched file and search for all user's records;
+@param const int user_id: user identification;
+@param int *manyWatched: pointer who tells to function that calls this
+how many movies are about to be returned;
+*/
+Watched *getUserHistory(const int user_id, int *manyWatched);
 
 #endif //watched_h
