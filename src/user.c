@@ -127,6 +127,15 @@ int signUp(const int verbosity) {
     
     user = readUserFromFile(1, login, &userCount);
 
+
+    if(user.id == -2){
+         if(createUsersFile() == -1) {
+            user.id = -1;
+        }else{
+            user = readUserFromFile(1, login, &userCount);
+        }
+    }
+    
     if(user.id > 0) {
         free(login);
         return -1;
