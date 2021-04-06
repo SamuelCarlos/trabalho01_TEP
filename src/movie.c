@@ -318,11 +318,11 @@ int showMovie(const int verbosity, Movie movie, int user_id) {
 
     do {
         if(!isValidOption)
-        {
+        {   
+            free(option);
             if(verbosity) printf("Digite uma opcao valida: ");
             isValidOption = 1;  
         }
-
         optionSize = 10;
         option = (char* ) calloc(optionSize, sizeof(char));
         i = 0;
@@ -338,6 +338,7 @@ int showMovie(const int verbosity, Movie movie, int user_id) {
             option[i + 1] = '\0';
             i++;
         }
+        if(i == 0) isValidOption = 0;
     } while(!isValidOption);
 
     optionNumber = atoi(option);
@@ -382,6 +383,7 @@ void watchMovie(const int verbosity, int user_id, int movie_id) {
     do {
         if(!isValidOption)
         {
+            free(option);
             if(verbosity) printf("Digite uma opcao valida: ");
             isValidOption = 1;  
         }
