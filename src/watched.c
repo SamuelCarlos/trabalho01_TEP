@@ -223,4 +223,6 @@ void sortWatchedByAvaliation(Watched *watched, int manyWatched){
         free(movie.title);
         free(movie.description);
     }
+
+    free(watched);
 }
