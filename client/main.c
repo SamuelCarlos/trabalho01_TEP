@@ -13,15 +13,23 @@ This is the beggining of the project,
 we limited argv to only one option because
 it's the only option used.
 */
-int main(int argc, char* argv[1]){
+int main(int argc, char* argv[]){
     int trash;
 
     // checks verbosity and defines its value as a const,
     // modifying it is not allowed
-    const int verbosity = atoi(argv[1]);
-    if(verbosity) trash = system("clear");
-
-    startMenu(verbosity);
+    if(!argv[1]) {
+        printf("Por favor, defina a verbosidade.\n");
+        return 0;
+    }else{
+        const int verbosity = atoi(argv[1]);
+        if(verbosity != 0 && verbosity != 1) {
+            printf("Verbosidade invalida, digite 1 ou 0.\n");
+            return 0;
+        }
+        if(verbosity) trash = system("clear");
+        startMenu(verbosity);
+    }
     
     return 0;
 }

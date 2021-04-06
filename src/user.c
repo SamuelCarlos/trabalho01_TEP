@@ -42,11 +42,21 @@ int signIn(const int verbosity) {
     };
 
     user = readUserFromFile(1, login, &userCount);
+
+    if(user.id == -2) {
+        if(createUsersFile() == -1) {
+            user.id = -1;
+        }else{
+            user = readUserFromFile(1, login, &userCount);
+        }
+    }
+
     free(login);
 
     if(user.id == -1) {
         return 0;
     }
+
 
     if(verbosity) printf("\t|        Senha: ");
 
@@ -202,7 +212,7 @@ User readUserFromFile(int column, char *value, int *userCount) {
 
     users = fopen("./data/users.csv","r");
     if(users == NULL) {
-        user.id = -1;
+        user.id = -2;
         return user;
     };
     user.id = 1;
@@ -241,7 +251,6 @@ User readUserFromFile(int column, char *value, int *userCount) {
 
         array_parser = 0;
 
-        // teste
         if(strcmp(value, row[column - 1]) == 0 && atoi(row[2]) == 0) {
             user.login = (char* ) calloc(strlen(row[0]) + 1, sizeof(char));
             user.login = strdup(row[0]);
@@ -459,4 +468,40 @@ void createUsuariosFile() {
     fclose(users);
     fclose(allWatched);
     fclose(usuarios);
+}
+
+int createUsersFile() {
+    FILE *users;
+    FILE *usuarios;
+    int usersLen, i;
+    long unsigned int usersSize;
+    char *usersPointer;
+
+    users = fopen("./data/users.csv","w");
+    usuarios = fopen("./data/usuarios.csv", "r");
+    if(usuarios == NULL) {
+        fclose(users);
+        return -1;
+    }
+
+    do {
+        usersSize = 0;
+        usersLen = getline(&usersPointer, &usersSize, usuarios);
+        if(usersLen == -1){
+            free(usersPointer);
+            break;
+        } 
+        usersPointer = (char* ) realloc(usersPointer, (usersLen + 1) * sizeof(char));
+        usersPointer[usersLen - 1] = ',';
+        usersPointer[usersLen] = '0';
+        usersPointer[usersLen + 1] = '\n';
+
+        fprintf(users, "%s", usersPointer);
+        
+        free(usersPointer);
+    } while(1);
+
+    fclose(users);
+    fclose(usuarios);
+    return 0;
 }

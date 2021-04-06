@@ -36,22 +36,21 @@ void startMenu(const int verbosity){
                     response = signIn(verbosity);
                     if(response > 0) {
                         mainMenu(verbosity, response); 
-                        verificator = 0;
                     }else if(verbosity){
                         switch (response) {
                             case(-2):
-                                trash = system("clear");
+                                if(verbosity) trash = system("clear");
                                 
                                 printf("\t__________________________\n");
                                 printf("\t| Login ou Senha errados |\n");
                                 break;
                             case(-1): 
-                                trash = system("clear");
+                                if(verbosity) trash = system("clear");
                                 printf("\t__________________________\n");
                                 printf("\t|     Senha incorreta    |\n");
                                 break;
                             case(0): 
-                                trash = system("clear");
+                                if(verbosity) trash = system("clear");
                                 printf("\t__________________________\n");
                                 printf("\t| Usuario nao cadastrado |\n");
                                 break;
@@ -64,22 +63,21 @@ void startMenu(const int verbosity){
                     response = signUp(verbosity);
                     if(response > 0) {
                         mainMenu(verbosity, response); 
-                        verificator = 0;
                     }else if(verbosity){
                         switch (response) {
                             case(-3): 
-                                trash = system("clear");
+                                if(verbosity) trash = system("clear");
                                 printf("\t__________________________\n");
                                 printf("\t| Senhas nao compativeis |\n");
                                 break;
                             case(-2):
-                                trash = system("clear");
+                                if(verbosity) trash = system("clear");
                                 printf("\t__________________________\n");
                                 printf("\t|  Usuario ou Senha fora |\n");
                                 printf("\t|       do padrao        |\n");
                                 break;
                             case(-1):
-                                trash = system("clear");
+                                if(verbosity) trash = system("clear");
                                 printf("\t__________________________\n");
                                 printf("\t|  Usuario ja cadastrado |\n");
                                 break;

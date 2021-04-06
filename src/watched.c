@@ -1,6 +1,7 @@
 #include "watched.h"
 #include "movie.h"
 #include "user.h"
+#include "utils.h"
 
 void writeNewWatched(Watched watched) {
     FILE * watches;
@@ -193,8 +194,6 @@ void sortWatchedByDate(Watched *watched, int manyWatched){
         free(movie.title);
         free(movie.description);
     }
-
-    
 }
 
 void sortWatchedByAvaliation(Watched *watched, int manyWatched){

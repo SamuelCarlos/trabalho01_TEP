@@ -72,4 +72,9 @@ and they history. It queries users and watched files to catch data;
 */
 void createUsuariosFile();
 
+/*
+@brief create a new users file and write on it not deleted users;
+*/
+int createUsersFile();
+
 #endif //user_h

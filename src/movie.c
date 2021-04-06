@@ -111,7 +111,7 @@ void listTenMovies(const int verbosity, const int user_id)
                 if ((optionNumber >= (actualPage * 10 + 1)) && (optionNumber < (actualPage + 1) * 10)) {
                     verificator = 0;
 
-                    trash = system("clear");
+                    if(verbosity) trash = system("clear");
                     end = showMovie(verbosity, movies[(optionNumber % 10) - 1], user_id);
                 }
             }
@@ -124,7 +124,7 @@ void listTenMovies(const int verbosity, const int user_id)
             free(movies);
             free(option);
 
-            trash = system("clear");
+            if(verbosity) trash = system("clear");
         }while (verificator);
 
         verificator = 1;
@@ -357,7 +357,7 @@ int showMovie(const int verbosity, Movie movie, const int user_id) {
         break;
     }
 
-    trash = system("clear");
+    if(verbosity) trash = system("clear");
     return end;
 }
 
@@ -396,7 +396,7 @@ void searchMovie(const int verbosity, const int user_id) {
         i++;
     }
 
-    trash = system("clear");
+    if(verbosity) trash = system("clear");
 
     matches = getMovieMatches(input, &movieCount);
 
@@ -427,58 +427,29 @@ void searchMovie(const int verbosity, const int user_id) {
             printf("\t| %d |   %s\n", matches[i].id, matches[i].title);
         }
         if(verbosity) printf("\t|--------------------------------|\n");
-        if(verbosity) printf("\t|    Digite o ID do filme ou     |\n");
-        if(verbosity) printf("\t|         1 para voltar:         |\n");
+        if(verbosity) printf("\t|      Digite 1 para voltar      |\n");
         if(verbosity) printf("\t|--------------------------------|\n");
     }
 
     do {
         if(verbosity) printf("\t|-> ");
         isValidOption = 1;
-        inputSize = 10;
-        input = (char* ) calloc(inputSize, sizeof(char));
         i = 0;
         while ((temp = getchar()) != '\n') 
         {
-            if(i + 1 == inputSize) 
-            {
-                inputSize *= 2;
-                input = (char* ) realloc(input, inputSize * sizeof(char));
+            if(i != 0 || temp != '1') {
+                isValidOption = 0;
             }
-
-            if(!isAlphanumeric(temp)) isValidOption = 0;
-            if(isAlphanumeric(temp) && !isNumber(temp)) isValidOption = 0;
-
-            input[i] = temp;
-            input[i + 1] = '\0';
             i++;
         }
-        if(!input[0]) isValidOption = 0;
-        
-        if(!isValidOption) 
-        {
-            free(input);
-        }
+        if(i == 0) isValidOption = 0;
     }while(!isValidOption);
 
-    trash = system("clear");
-    switch(atoi(input)) {
-        case (1):
-            break;
-        default:
-            for(i = 0; i < movieCount; i++){
-                if(matches[i].id == atoi(input)) 
-                {
-                    showMovie(verbosity, matches[i], user_id);
-                    break;
-                }
-            }
-            break;
-    }
+    if(verbosity) trash = system("clear");
+    
     for(i = 0; i < movieCount; i++) {
         free(matches[i].title);
         free(matches[i].description);
     }
     free(matches);
-    free(input);
 }
