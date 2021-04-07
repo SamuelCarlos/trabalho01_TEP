@@ -458,7 +458,7 @@ void createUsuariosFile() {
         {
             fprintf(usuarios, "%s,%s", row[0], row[1]);
 
-            if(noHistory) {
+            if(!noHistory) {
                 history = getUserHistory(user.id, &manyWatched);
 
                 if(history[0].id > 0) 
@@ -480,8 +480,8 @@ void createUsuariosFile() {
         user.id++;
     } while(1);
 
+    if(!noHistory) fclose(allWatched);
     fclose(users);
-    fclose(allWatched);
     fclose(usuarios);
 }
 
