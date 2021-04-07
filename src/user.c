@@ -129,13 +129,13 @@ int signUp(const int verbosity) {
 
 
     if(user.id == -2){
-         if(createUsersFile() == -1) {
+        if(createUsersFile() == -1) {
             user.id = -1;
         }else{
             user = readUserFromFile(1, login, &userCount);
         }
     }
-    
+
     if(user.id > 0) {
         free(login);
         return -1;
@@ -415,13 +415,16 @@ void createUsuariosFile() {
     FILE *usuarios;
     User user;
     Watched *history;
-    int usersLen, watchedLen, i, manyWatched;
+    int usersLen, watchedLen, i, manyWatched, noHistory = 0;
     long unsigned int usersSize, watchedSize;
     char *usersPointer, *usersPointer2, *watchedPointer, *watchedPointer2, *token;
     char **row;
 
     usuarios = fopen("./data/usuarios.csv", "w");
     allWatched = fopen("./data/watched.csv", "r");
+    if(allWatched == NULL) {
+        noHistory = 1;
+    }
     users = fopen("./data/users.csv","r");
 
     user.id = 1;
@@ -454,17 +457,20 @@ void createUsuariosFile() {
         if(atoi(row[2]) == 0) 
         {
             fprintf(usuarios, "%s,%s", row[0], row[1]);
-            history = getUserHistory(user.id, &manyWatched);
 
-            if(history[0].id > 0) 
-            {
-                for(i = 0; i < manyWatched; i++) 
+            if(noHistory) {
+                history = getUserHistory(user.id, &manyWatched);
+
+                if(history[0].id > 0) 
                 {
-                    fprintf(usuarios, ",%d,%.2f,%.2d/%.2d/%.4d", history[i].movie_id, history[i].user_avaliation, history[i].day, history[i].month, history[i].year);
+                    for(i = 0; i < manyWatched; i++) 
+                    {
+                        fprintf(usuarios, ",%d,%.2f,%.2d/%.2d/%.4d", history[i].movie_id, history[i].user_avaliation, history[i].day, history[i].month, history[i].year);
+                    }
                 }
-            }
 
-            free(history);
+                free(history);
+            }
             fprintf(usuarios, "\n");
         }
 
