@@ -13,8 +13,7 @@
 	|                        |
 	|    Digite o nome       |
 	|       do usuario: 	__________________________
-	|  Usuario ou Senha fora |
-	|       do padrao        |
+	|  Usuario ja cadastrado |
 	__________________________
 	|         UFLIX          |
 	|------------------------|

@@ -15,6 +15,12 @@ int signIn(const int verbosity) {
     if(verbosity) printf("\t|                        |\n");
     if(verbosity) printf("\t|        Login: ");
 
+    /**
+     * allocates "inputSize" characters in a string, in case of user input overflow this
+     * 10 characters, it will reallocate double of the previous size.
+     * Note: it will always check user input + 1, because it needs a '\0' at the end of
+     * the string. 
+     */
     inputSize = 10;
     login = (char* ) calloc(inputSize, sizeof(char));
     while((temp = getchar()) != '\n')
@@ -36,6 +42,10 @@ int signIn(const int verbosity) {
     if(!count) error = 1;
     count = 0;
     
+    /**
+     * this error indicates the string doesn't match with the required pattern
+     * in this case, it's not alphanumeric or it's just a '\n';
+    */
     if(error) {
         free(login);
         return -2;
@@ -43,6 +53,15 @@ int signIn(const int verbosity) {
 
     user = readUserFromFile(1, login, &userCount);
 
+    /**
+     * filter errors returns of readUserFromFile and in the case of user.id is -2
+     * is because the 'users.csv' file was not created. So we call a function who
+     * reads 'usuarios.csv' file and creates the new 'users.csv' with the active
+     * verificator at each user row.
+     * Note: case 'createUsersFile' returns -1, indicates that no user has been
+     * created until that moment. So it changes user.id to -1 in time of fail on
+     * the next verification.
+    */
     if(user.id == -2) {
         if(createUsersFile() == -1) {
             user.id = -1;
@@ -53,13 +72,19 @@ int signIn(const int verbosity) {
 
     free(login);
 
+    /**
+     * if user.id == -1, indicates that the user dont exist.
+    */
     if(user.id == -1) {
         return 0;
     }
 
-
     if(verbosity) printf("\t|        Senha: ");
 
+    /**
+     * verifies each password character from user with user given character
+     * to see if both inputs match.
+    */
     while((temp = getchar()) != '\n')
     {
         if(user.password[count])
@@ -151,7 +176,6 @@ int signUp(const int verbosity) {
     free(login);
 
     if(verbosity) printf("\t|   Digite a senha: ");
-
 
     inputSize = 10;
     password = (char* ) calloc(inputSize, sizeof(char));

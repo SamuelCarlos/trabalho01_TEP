@@ -28,6 +28,7 @@ int main(int argc, char* argv[]){
             return 0;
         }
         if(verbosity) trash = system("clear");
+        
         startMenu(verbosity);
     }
     

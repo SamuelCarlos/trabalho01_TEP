@@ -33,6 +33,8 @@ history or deleting his account;
 @param const int verbosity: defines menus are going to be printed;
 @param const int user_id: the ID of the logged user, it can't be
 changed;
+@return 1: user deleted;
+        0: not deleted;
 */
 int personalMenu(const int verbosity, const int user_id);
 

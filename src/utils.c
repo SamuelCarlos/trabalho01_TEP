@@ -84,3 +84,24 @@ char *toUpperString(char *string) {
 
     return uppercased;
 }
+
+char inputVerificatorSingle (const int verbosity) {
+    int isValidInformation = 1, i;
+    char option, temp;
+
+    do{
+        if(!isValidInformation) if(verbosity) printf("\tPor favor digite uma entrada valida: ");
+        isValidInformation = 1;
+        i = 0;
+        while((temp = getchar()) != '\n'){
+            if(i == 0) {
+                option = temp;
+            };
+            if(i > 0) isValidInformation = 0;
+            i++;
+        };
+        if(i == 0) isValidInformation = 0;
+    }while(!isValidInformation);
+
+    return option;
+}

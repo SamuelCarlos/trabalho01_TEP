@@ -57,4 +57,12 @@ int verifyValidDate(int day, int month, int year);
 */
 int isAlphanumeric(char c);
 
+
+/*
+@brief catch up user input while its a valid single char input;
+@param const int verbosity: defines if menus are about to be printed;
+@return char: valid input;
+*/
+char inputVerificatorSingle(const int verbosity);
+
 #endif //utils_h
