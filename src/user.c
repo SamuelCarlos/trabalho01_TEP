@@ -120,11 +120,13 @@ int signUp(const int verbosity) {
     char *login, *password;
     User user;
 
-    if(verbosity) printf("\t__________________________\n");
-    if(verbosity) printf("\t|                        |\n");
-    if(verbosity) printf("\t|    Digite o nome       |\n");
-    if(verbosity) printf("\t|       do usuario: ");
-
+    if(verbosity) 
+    {
+        printf("\t__________________________\n");
+        printf("\t|                        |\n");
+        printf("\t|    Digite o nome       |\n");
+        printf("\t|       do usuario: ");
+    }
     inputSize = 10;
     login = (char* ) calloc(inputSize, sizeof(char));
     while((temp = getchar()) != '\n')

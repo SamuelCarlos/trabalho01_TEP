@@ -74,6 +74,7 @@ void createUsuariosFile();
 
 /*
 @brief create a new users file and write on it not deleted users;
+@return -1 if usuarios.csv doesn't exist;
 */
 int createUsersFile();
 
