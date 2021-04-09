@@ -22,13 +22,19 @@ void listTenMovies(const int verbosity, const int user_id)
 
 
     do {
+        /**
+        * Loop to get ten movies using the function getMovieByID and prints on the screen;
+        */
         do {
             movies = (Movie* ) calloc(10, sizeof(Movie));
             j = 0;
             movieQnt = 0;
 
+            /**
+             * Loop to get the movies data;
+            */
             for (i = (actualPage * 10 + 1); i < (actualPage + 1) * 10; i++) 
-            {
+            {   
                 movies[j] = getMovieByID(i);
 
 
@@ -57,6 +63,9 @@ void listTenMovies(const int verbosity, const int user_id)
             if(verbosity) printf("|  ID |   Titulo                                    |\n"); 
             if(verbosity) printf("|-----|---------------------------------------------|\n");
 
+            /**
+             * Loop to print the movies data;
+            */
             for (i = 0; i < movieQnt; i++){
                 printf("| %d  |   %s\n", movies[i].id, movies[i].title);
             }
@@ -75,7 +84,9 @@ void listTenMovies(const int verbosity, const int user_id)
             if(verbosity) printf("-----------------------------------------------------\n");
 
             if(verbosity) printf("Escolha seu filme ou navegue pelas paginas: ");
-
+            /**
+             * loop to verify if user's input is a valid entry;
+            */
             do {
                 if(!isValidOption){
                     if(verbosity) printf("Digite uma opcao valida: ");
@@ -97,7 +108,7 @@ void listTenMovies(const int verbosity, const int user_id)
                     i++;
                 }
             } while(!isValidOption);
-
+             
             if(strcmp(option, "A") == 0 && actualPage > 0) {
                 if(end) end = 0;
                 actualPage--;
@@ -150,7 +161,9 @@ Movie getMovieByID(const int id)
     }
 
     movie.id = 1;
-
+    /**
+     * loop to found a movie by your ID;
+    */
     do {
         size = 0;
         len = getline(&pointer, &size, movies);
@@ -162,6 +175,10 @@ Movie getMovieByID(const int id)
 
         pointer2 = pointer;
 
+        /**
+         * if the movie ID is different the function continues until it finds the right id;
+         * When the ID is equal, the function reads the line and saves the movie data;
+        */  
         if(movie.id == id) {
 
             row = (char** ) calloc(5, sizeof(char*));
@@ -193,7 +210,10 @@ Movie getMovieByID(const int id)
             length = strlen(row[4]) + 1;
             movie.description = (char* ) calloc(length, sizeof(char));
             movie.description = strdup(row[4]);
-        
+
+            /*
+             * If movie is found the loop ends;
+            */
             found = 1;
             free(row);
         }
