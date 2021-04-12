@@ -1,8 +1,8 @@
-#include "menu.h"
-#include "user.h"
-#include "utils.h"
-#include "movie.h"
-#include "watched.h"
+#include "../include/menu.h"
+#include "../include/user.h"
+#include "../include/utils.h"
+#include "../include/movie.h"
+#include "../include/watched.h"
 
 /** 
  * first menu seen by the user, ask for login or logon.
@@ -27,7 +27,7 @@ void startMenu(const int verbosity){
             printf("\t|                        |\n");
             printf("\t|------------------------|\n");
             printf("\t| Samuel | v1.0 | Bruno  |\n");
-            printf("\t|-------------------------\n");
+            printf("\t|------------------------|\n");
             printf("\t|-> ");
         }
 
@@ -55,23 +55,16 @@ void startMenu(const int verbosity){
                 response = signIn(verbosity);
                 if(response > 0) {
                     mainMenu(verbosity, response); 
-                    verificator = 0;
-                }else if(verbosity){
+                    // verificator = 0;
+                }else{
                     switch (response) {
-                        case(-2):
-                            trash = system("clear");
-                            printf("\t__________________________\n");
-                            printf("\t| Login ou Senha errados |\n");
-                            break;
                         case(-1): 
                             trash = system("clear");
-                            printf("\t__________________________\n");
-                            printf("\t|     Senha incorreta    |\n");
+                            printf("Senha incorreta.\n");
                             break;
                         case(0): 
                             trash = system("clear");
-                            printf("\t__________________________\n");
-                            printf("\t| Usuario nao cadastrado |\n");
+                            printf("Usuario nao cadastrado.\n");
                             break;
                         default: 
                             break;
@@ -86,23 +79,19 @@ void startMenu(const int verbosity){
                 response = signUp(verbosity);
                 if(response > 0) {
                     mainMenu(verbosity, response); 
-                }else if(verbosity){
+                }else{
                     switch (response) {
                         case(-3): 
                             trash = system("clear");
-                            printf("\t__________________________\n");
-                            printf("\t| Senhas nao compativeis |\n");
+                            printf("Senha incorreta.\n");
                             break;
                         case(-2):
                             trash = system("clear");
-                            printf("\t__________________________\n");
-                            printf("\t|  Usuario ou Senha fora |\n");
-                            printf("\t|       do padrao        |\n");
+                            printf("Fora do padrao.\n");
                             break;
                         case(-1):
                             trash = system("clear");
-                            printf("\t__________________________\n");
-                            printf("\t|  Usuario ja cadastrado |\n");
+                            printf("Usuario ja cadastrado.\n");
                             break;
                         default: 
                             break;
@@ -221,7 +210,7 @@ int personalMenu(const int verbosity, const int user_id) {
 
         switch(option) {
             case('1'):
-                showHistory(user_id);
+                showHistory(verbosity, user_id);
                 break;
             case('2'):
                 deleteUser(user_id);

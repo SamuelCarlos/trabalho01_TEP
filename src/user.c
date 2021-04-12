@@ -1,6 +1,6 @@
-#include "user.h"
-#include "utils.h"
-#include "watched.h"
+#include "../include/user.h"
+#include "../include/utils.h"
+#include "../include/watched.h"
 
 int signIn(const int verbosity) {
     int count = 0;
@@ -48,7 +48,7 @@ int signIn(const int verbosity) {
     */
     if(error) {
         free(login);
-        return -2;
+        return 0;
     };
 
     user = readUserFromFile(1, login, &userCount);

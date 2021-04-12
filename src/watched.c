@@ -1,7 +1,7 @@
-#include "watched.h"
-#include "movie.h"
-#include "user.h"
-#include "utils.h"
+#include "../include/watched.h"
+#include "../include/movie.h"
+#include "../include/user.h"
+#include "../include/utils.h"
 
 void writeNewWatched(Watched watched) {
     FILE * watches;
@@ -13,7 +13,7 @@ void writeNewWatched(Watched watched) {
     fclose(watches);
 }
 
-void showHistory(const int user_id){
+void showHistory(const int verbosity, const int user_id){
     User user;
     Watched *history;
     int i, isValidOption, manyWatched;
@@ -22,18 +22,18 @@ void showHistory(const int user_id){
     history = getUserHistory(user_id, &manyWatched);
 
     if(history[0].id == -2){
-        printf("\tAinda nao existe nenhum registro de historico.\n");
+        if(verbosity) printf("\tAinda nao existe nenhum registro de historico.\n");
     }else if(history[0].id == -1){
-        printf("\tAinda nao existe nenhum registro de historico para o usuario.\n");
+        if(verbosity) printf("\tAinda nao existe nenhum registro de historico para o usuario.\n");
     }else{
 
-        printf("\tDigite D para ordenar por Data.\n");
-        printf("\tou digite N para ordenar por Nota.\n");
+        if(verbosity) printf("\tDigite D para ordenar por Data.\n");
+        if(verbosity) printf("\tou digite N para ordenar por Nota.\n");
         /**
          * Loop to verify if user's input is a valid entry;
         */
         do{
-            printf("\t-> ");
+            if(verbosity) printf("\t-> ");
             isValidOption = 1;
             i = 0;
             while((temp = getchar()) != '\n')
@@ -49,8 +49,8 @@ void showHistory(const int user_id){
 
         user = getUserById(user_id);
 
-        printf("\tNome: %s\n", user.login);
-        printf("\tMeu historico:\n");
+        printf("Nome: %s\n", user.login);
+        printf("Meu historico:\n");
 
         free(user.login);
         free(user.password);
@@ -236,15 +236,13 @@ void sortWatchedByAvaliation(Watched *watched, int manyWatched){
     for(i = 0; i < manyWatched; i++){
         movie = getMovieByID(watched[i].movie_id);
         if(watched[i].user_avaliation < 0){
-            printf("\tSem avaliacao - %s: %.2d/%.2d/%.4d\n", movie.title,watched[i].day,watched[i].month,watched[i].year);
+            printf("\t%.2d/%.2d/%.4d - %s: Sem avaliacao\n",watched[i].day,watched[i].month,watched[i].year,movie.title);
         }else{
-            printf("\t%.2f - %s: %.2d/%.2d/%.4d\n",watched[i].user_avaliation, movie.title,watched[i].day,watched[i].month,watched[i].year);
+            printf("\t%.2d/%.2d/%.4d - %s: %.2f\n",watched[i].day,watched[i].month,watched[i].year,movie.title,watched[i].user_avaliation);
         }
         free(movie.title);
         free(movie.description);
     }
-
-    free(watched);
 }
 
 void watchMovie(const int verbosity, const int user_id, const int movie_id) {

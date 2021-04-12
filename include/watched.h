@@ -18,12 +18,11 @@ typedef struct {
 /*
 @brief query and lists all movies watched by the user with watched
 date and user avaliation;
-@param int user_id: user id to query the watched file;
-@param char filter: expected: (D: filter by date, N: 
-filter by avaliation);
+@param const int verbosity: verbosity;
+@param const int user_id: user id to query the watched file;
 @return array of Watched with all Watched movies by the user;
 */
-void showHistory(const int user_id);
+void showHistory(const int verbosity, const int user_id);
 
 /*
 @brief filter the search result by date;

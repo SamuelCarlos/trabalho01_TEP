@@ -1,6 +1,6 @@
-#include "movie.h"
-#include "watched.h"
-#include "utils.h"
+#include "../include/movie.h"
+#include "../include/watched.h"
+#include "../include/utils.h"
 
 
 void listTenMovies(const int verbosity, const int user_id)
@@ -67,7 +67,7 @@ void listTenMovies(const int verbosity, const int user_id)
              * Loop to print the movies data;
             */
             for (i = 0; i < movieQnt; i++){
-                printf("| %d  |   %s\n", movies[i].id, movies[i].title);
+                printf("%d- %s\n", movies[i].id, movies[i].title);
             }
 
             if(verbosity) printf("______|______________________________________________\n");
@@ -82,7 +82,7 @@ void listTenMovies(const int verbosity, const int user_id)
                 if(verbosity) printf("|                 voltar ao menu: 0                 |\n");
             }
             if(verbosity) printf("-----------------------------------------------------\n");
-
+            
             if(verbosity) printf("Escolha seu filme ou navegue pelas paginas: ");
             /**
              * loop to verify if user's input is a valid entry;
@@ -90,7 +90,8 @@ void listTenMovies(const int verbosity, const int user_id)
             do {
                 if(!isValidOption){
                     if(verbosity) printf("Digite uma opcao valida: ");
-                    isValidOption = 1;  
+                    free(option);
+                    isValidOption = 1; 
                 }
                 inputSize = 10;
                 option = (char* ) calloc(inputSize, sizeof(char));
@@ -114,6 +115,14 @@ void listTenMovies(const int verbosity, const int user_id)
                 actualPage--;
             }else if(strcmp(option, "M") == 0 && !end){
                 actualPage++;
+            }else if(strcmp(option, "M") == 0 && end){
+                printf("Fim de filmes disponiveis\n");
+                /**
+                 *  Dont let page keep rolling if there's no movies left to show 
+                 */
+                if(movieQnt > 0){
+                    actualPage++;
+                }
             }else if(strcmp(option, "0") == 0){
                 end = 1;
                 verificator = 0;
@@ -361,6 +370,7 @@ int showMovie(const int verbosity, Movie movie, const int user_id) {
         }
         if(i == 0) isValidOption = 0;
         if(i > 1) isValidOption = 0;
+        if(option != '1' && option != '2' ) isValidOption = 0;
     } while(!isValidOption);
     
     /**
@@ -384,11 +394,11 @@ int showMovie(const int verbosity, Movie movie, const int user_id) {
 }
 
 void printMovieMetadata(Movie movie) {
-    printf("\n\t       Titulo: %s\n", movie.title);
-    printf("\t          Ano: %d\n", movie.year);
-    printf("\t      Duracao: %d min\n", movie.duration);
-    printf("\t         Nota: %.2f\n", movie.avaliation);
-    printf("\t    Descricao: %s\n", movie.description);
+    printf("Titulo: %s\n", movie.title);
+    printf("Ano: %d\n", movie.year);
+    printf("Duracao: %d minutos\n", movie.duration);
+    printf("Avaliacao: %.2f\n", movie.avaliation);
+    printf("Descricao: %s\n", movie.description);
 }
 
 void searchMovie(const int verbosity, const int user_id) {
@@ -449,7 +459,7 @@ void searchMovie(const int verbosity, const int user_id) {
         if(verbosity) printf("\t|     Resultados encontrados:    |\n");
         if(verbosity) printf("\t|--------------------------------|\n");
         for(i = 0; i < movieCount; i++) {
-            printf("\t| %d |   %s\n", matches[i].id, matches[i].title);
+            printf("%d- %s\n", matches[i].id, matches[i].title);
         }
         if(verbosity) printf("\t|--------------------------------|\n");
         if(verbosity) printf("\t|      Digite 1 para voltar      |\n");
