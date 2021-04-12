@@ -55,7 +55,7 @@ void startMenu(const int verbosity){
                 response = signIn(verbosity);
                 if(response > 0) {
                     mainMenu(verbosity, response); 
-                    // verificator = 0;
+                    verificator = 0;
                 }else if(verbosity){
                     switch (response) {
                         case(-2):

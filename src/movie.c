@@ -327,7 +327,7 @@ Movie *getMovieMatches(char *string, int *movieCount) {
     }
 
     /**
-     * Count how many movies have the string;
+     * Count how many movies matches with the given string;
     */
     *movieCount = count;
 
@@ -338,10 +338,8 @@ Movie *getMovieMatches(char *string, int *movieCount) {
 int showMovie(const int verbosity, Movie movie, const int user_id) {
     int i = 0, trash, end = 0;
     int isValidOption = 1;
-    int optionSize;
-    int optionNumber;
     char temp;
-    char* option;
+    char option;
   
     printMovieMetadata(movie);
     if(verbosity) printf("\t               O que deseja fazer?\n\n\t               1: Assistir\n\t               2: Voltar\n\t            -> ");
@@ -351,43 +349,31 @@ int showMovie(const int verbosity, Movie movie, const int user_id) {
     do {
         if(!isValidOption)
         {   
-            free(option);
             if(verbosity) printf("Digite uma opcao valida: ");
             isValidOption = 1;  
         }
-        optionSize = 10;
-        option = (char* ) calloc(optionSize, sizeof(char));
         i = 0;
         while((temp = getchar()) != '\n')
         {
             if(!isNumber(temp)) isValidOption = 0;
-            if((i + 1) == optionSize) 
-            {
-                optionSize *= 2;
-                option = (char* ) realloc(option, optionSize * sizeof(char));
-            }
-            option[i] = temp;
-            option[i + 1] = '\0';
+            if(i == 0) option = temp;
             i++;
         }
         if(i == 0) isValidOption = 0;
+        if(i > 1) isValidOption = 0;
     } while(!isValidOption);
-
-    optionNumber = atoi(option);
-    free(option);
     
     /**
      * 1 to watch
      * 2 to come back
     */
-    switch (optionNumber)
+    switch (option)
     {
-    case (1):
+    case ('1'):
         watchMovie(verbosity, user_id, movie.id);
         end = 1;
         break;
-    case (2):
-                    
+    case ('2'):
         break;
     default:
         break;
