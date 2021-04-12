@@ -129,6 +129,10 @@ int signUp(const int verbosity) {
     }
     inputSize = 10;
     login = (char* ) calloc(inputSize, sizeof(char));
+    /**
+     * Loop to get the user login
+     * filters the invalid characters; 
+    */
     while((temp = getchar()) != '\n')
     {
         if(isAlphanumeric(temp)) {
@@ -146,15 +150,23 @@ int signUp(const int verbosity) {
     }
     if(!count) error = 1;
     count = 0;
-
+    /**
+     * If the reading finds an error the program returns -2;
+    */
     if(error) {
         free(login);
         return -2;
     };
-    
+    /**
+     * Passes the login to the function and compares the user id it returns;
+    */
     user = readUserFromFile(1, login, &userCount);
-
-
+    /**
+     * If user ID is -2 the file does not exist
+     * Note: case 'createUsersFile' returns -1, indicates that no user has been
+     * created until that moment. So it changes user.id to -1 in time of fail on
+     * the next verification.
+    */
     if(user.id == -2){
         if(createUsersFile() == -1) {
             user.id = -1;
@@ -162,12 +174,18 @@ int signUp(const int verbosity) {
             user = readUserFromFile(1, login, &userCount);
         }
     }
-
+    /**
+     * If user ID is > 0 the function return -1 
+     * what it means that the user is already exist;
+    */
     if(user.id > 0) {
         free(login);
         return -1;
     }
-
+    /**
+     * If user ID is -1 the function save user login;
+     * what it means that the user can be created;
+    */
     if(user.id == -1) {
         user.id = userCount;
         user.login = (char* ) calloc(strlen(login) + 1, sizeof(char));
@@ -181,6 +199,10 @@ int signUp(const int verbosity) {
 
     inputSize = 10;
     password = (char* ) calloc(inputSize, sizeof(char));
+    /**
+     * Loop to get the user password
+     * filters the invalid characters; 
+    */
     while((temp = getchar()) != '\n')
     {
         if(isAlphanumeric(temp)) {
@@ -208,9 +230,11 @@ int signUp(const int verbosity) {
     strcpy(user.password, password);
     user.password[strlen(password) + 1] = '\0';
     free(password);
-
+    /**
+     * Loop to get again the user password
+     * compared to the first password entered; 
+    */
     if(verbosity) printf("\t|   Repita a senha: ");
-
     while((temp = getchar()) != '\n')
     { 
         if(user.password[count]){
@@ -220,7 +244,12 @@ int signUp(const int verbosity) {
         }
         count++;
     }
-
+    /**
+     * if the reading finds any error in the comparison 
+     * or the password is less than the previous password
+     * the program returns -3
+     * what it means that passwords are not compatible;
+    */
     if(count < strlen(user.password)) error = 1;
     if(error) {
         free(user.login);
@@ -251,7 +280,10 @@ User readUserFromFile(int column, char *value, int *userCount) {
         return user;
     };
     user.id = 1;
-
+    /**
+     *  Loop to get all lines from the users file 
+     *  until you find the value passed by the user;
+    */
     do {
         size = 0;
         len = getline(&pointer, &size, users);
@@ -285,7 +317,10 @@ User readUserFromFile(int column, char *value, int *userCount) {
         }
 
         array_parser = 0;
-
+        /**
+         * compares the value with the values ​​of the column passed by the user
+         * and checks if the user has been deleted;
+        */
         if(strcmp(value, row[column - 1]) == 0 && atoi(row[2]) == 0) {
             user.login = (char* ) calloc(strlen(row[0]) + 1, sizeof(char));
             user.login = strdup(row[0]);
@@ -304,7 +339,6 @@ User readUserFromFile(int column, char *value, int *userCount) {
 
         user.id++;
     } while(!found);
-
 
     *userCount = user.id;
     if(!found) {
@@ -330,7 +364,11 @@ User getUserById(const int id) {
     }
 
     user.id = 1;
-
+    /**
+     * loop to read line by line from the user file 
+     * until reach the line that corresponds to the id passed by the user
+     * and save the corresponding data for that ID;
+    */
     do {
         size = 0;
         len = getline(&pointer, &size, users);
@@ -406,7 +444,11 @@ void deleteUser(int user_id) {
     users = fopen("./data/users.csv","r+");
 
     user.id = 1;
-
+    /**
+     * loop to read line by line from the user file 
+     * until reach the line that corresponds to the id passed by the user
+     * and change the value of deleted to 1;
+    */
     do {
         size = 0;
         len = getline(&pointer, &size, users);
@@ -454,7 +496,10 @@ void createUsuariosFile() {
     users = fopen("./data/users.csv","r");
 
     user.id = 1;
-
+    /**
+     * loop to read line by line from the "users.csv" file 
+     * copy the valid lines and the user history to the "usuarios.csv" file;
+    */
     do {
         usersSize = 0;
         usersLen = getline(&usersPointer, &usersSize, users);
@@ -479,11 +524,15 @@ void createUsuariosFile() {
             token = strtok_r(NULL, ",", &usersPointer);
             row[i] = token;
         }
-
+        /** 
+         * copy if the user not was deleted;
+        */
         if(atoi(row[2]) == 0) 
         {
             fprintf(usuarios, "%s,%s", row[0], row[1]);
-
+            /**
+             * copy the user history;
+            */
             if(!noHistory) {
                 history = getUserHistory(user.id, &manyWatched);
 
@@ -517,21 +566,24 @@ int createUsersFile() {
     int usersLen, i;
     long unsigned int usersSize;
     char *usersPointer;
-
+    
     users = fopen("./data/users.csv","w");
     usuarios = fopen("./data/usuarios.csv", "r");
     if(usuarios == NULL) {
         fclose(users);
         return -1;
     }
-
+    /**
+     * loop to read line by line from the "usuarios.csv" file 
+     * copy the lines to the "usuarios.csv" file;
+    */
     do {
         usersSize = 0;
         usersLen = getline(&usersPointer, &usersSize, usuarios);
         if(usersLen == -1){
             free(usersPointer);
             break;
-        } 
+        }
         usersPointer = (char* ) realloc(usersPointer, (usersLen + 1) * sizeof(char));
         usersPointer[usersLen - 1] = ',';
         usersPointer[usersLen] = '0';

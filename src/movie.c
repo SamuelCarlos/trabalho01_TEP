@@ -23,7 +23,7 @@ void listTenMovies(const int verbosity, const int user_id)
 
     do {
         /**
-        * Loop to get ten movies using the function getMovieByID and prints on the screen;
+         * Loop to get ten movies using the function getMovieByID and prints on the screen;
         */
         do {
             movies = (Movie* ) calloc(10, sizeof(Movie));
@@ -162,7 +162,7 @@ Movie getMovieByID(const int id)
 
     movie.id = 1;
     /**
-     * loop to found a movie by your ID;
+     * Loop to found a movie by your ID;
     */
     do {
         size = 0;
@@ -176,7 +176,7 @@ Movie getMovieByID(const int id)
         pointer2 = pointer;
 
         /**
-         * if the movie ID is different the function continues until it finds the right id;
+         * If the movie ID is different, the function continues until it finds the right id;
          * When the ID is equal, the function reads the line and saves the movie data;
         */  
         if(movie.id == id) {
@@ -211,8 +211,8 @@ Movie getMovieByID(const int id)
             movie.description = (char* ) calloc(length, sizeof(char));
             movie.description = strdup(row[4]);
 
-            /*
-             * If movie is found the loop ends;
+            /**
+             * If the movie is found the loop ends;
             */
             found = 1;
             free(row);
@@ -251,6 +251,11 @@ Movie *getMovieMatches(char *string, int *movieCount) {
 
     movie.id = 1;
 
+    /**
+     * Loop to get all lines from the movie file
+     * and compare the movie titles with the string passed by the user
+     * if the string is a substring of the movie title save the movie in a pointer;
+    */
     do {
         size = 0;
         len = getline(&pointer, &size, movies);
@@ -263,7 +268,7 @@ Movie *getMovieMatches(char *string, int *movieCount) {
         pointer2 = pointer;
         
         row = (char** ) calloc(5, sizeof(char*));
-
+        
         token = strtok_r(pointer, ",", &pointer);
         row[array_parser] = token;
         array_parser++;
@@ -295,7 +300,9 @@ Movie *getMovieMatches(char *string, int *movieCount) {
     
         free(row);
         free(pointer2);
-
+        /**
+         * Converts all letters in the string and each title to uppercase to compare;
+        */
         uppercasedString = toUpperString(movie.title);
         uppercasedString2 = toUpperString(string);
 
@@ -319,6 +326,9 @@ Movie *getMovieMatches(char *string, int *movieCount) {
         matches[0].id = -1;
     }
 
+    /**
+     * Count how many movies have the string;
+    */
     *movieCount = count;
 
     fclose(movies);
@@ -335,7 +345,9 @@ int showMovie(const int verbosity, Movie movie, const int user_id) {
   
     printMovieMetadata(movie);
     if(verbosity) printf("\t               O que deseja fazer?\n\n\t               1: Assistir\n\t               2: Voltar\n\t            -> ");
-
+    /**
+     * Loop to verify if user's input is a valid entry;
+    */
     do {
         if(!isValidOption)
         {   
@@ -364,6 +376,10 @@ int showMovie(const int verbosity, Movie movie, const int user_id) {
     optionNumber = atoi(option);
     free(option);
     
+    /**
+     * 1 to watch
+     * 2 to come back
+    */
     switch (optionNumber)
     {
     case (1):
@@ -403,6 +419,9 @@ void searchMovie(const int verbosity, const int user_id) {
     inputSize = 10;
     input = (char* ) calloc(inputSize, sizeof(char));
     i = 0;
+    /**
+     * Loop to get a string that the user is looking for;
+    */
     while ((temp = getchar()) != '\n') 
     {
         if(i + 1 == inputSize) 
@@ -450,7 +469,9 @@ void searchMovie(const int verbosity, const int user_id) {
         if(verbosity) printf("\t|      Digite 1 para voltar      |\n");
         if(verbosity) printf("\t|--------------------------------|\n");
     }
-
+    /**
+     * Loop to verify if user's input is a valid entry;
+    */
     do {
         if(verbosity) printf("\t|-> ");
         isValidOption = 1;

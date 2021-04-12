@@ -29,7 +29,9 @@ void showHistory(const int user_id){
 
         printf("\tDigite D para ordenar por Data.\n");
         printf("\tou digite N para ordenar por Nota.\n");
-
+        /**
+         * Loop to verify if user's input is a valid entry;
+        */
         do{
             printf("\t-> ");
             isValidOption = 1;
@@ -52,7 +54,9 @@ void showHistory(const int user_id){
 
         free(user.login);
         free(user.password);
-
+        /**
+         * ordering and printing the history;
+        */
         if(firstEntry == 'D'){
             sortWatchedByDate(history, manyWatched);
         }else if(firstEntry == 'N'){
@@ -63,9 +67,9 @@ void showHistory(const int user_id){
 }
 
 Watched *getUserHistory(const int user_id, int *manyWatched){
-    FILE *user_watched; // movies
-    Watched watched; // movie
-    Watched *history; // matches
+    FILE *user_watched;
+    Watched watched;
+    Watched *history;
     int i, end = 0, count = 0, found = 0, array_parser = 0, len, length;
     long unsigned int size;
     char *pointer, *pointer2, *token;
@@ -81,7 +85,11 @@ Watched *getUserHistory(const int user_id, int *manyWatched){
     }
 
     watched.id = 1;
-
+    /**
+     * Loop to get all lines from the "watched.csv" file 
+     * and save the history to the pointer 
+     * if the line contains the user's id passed by user;
+    */
     do {
         size = 0;
         len = getline(&pointer, &size, user_watched);
@@ -140,7 +148,9 @@ Watched *getUserHistory(const int user_id, int *manyWatched){
     }
 
     fclose(user_watched);
-    
+    /**
+     * counts how many movies the user watched;
+    */ 
     *manyWatched = count;
 
     return history;
@@ -151,7 +161,9 @@ void sortWatchedByDate(Watched *watched, int manyWatched){
     Watched aux;
     Movie movie;
 
-    //sort by year
+    /**
+     * sort by year
+    */
     for(i = 1; i < manyWatched; i++){
         for(j = 0; j < manyWatched - i; j++){
             if(watched[j].year < watched[j + 1].year){
@@ -162,7 +174,9 @@ void sortWatchedByDate(Watched *watched, int manyWatched){
         }
     }
 
-    //sort by month
+    /**
+     * sort by month if the years are same;
+    */
     for(i = 1; i < manyWatched; i++){
         for(j = 0; j < manyWatched - i; j++){
             if(watched[j].month < watched[j + 1].month && watched[j].year == watched[j+1].year){
@@ -173,7 +187,9 @@ void sortWatchedByDate(Watched *watched, int manyWatched){
         }
     }
 
-    //sort by day
+    /**
+     * sort by day if the years and the months are same;
+    */
     for(i = 1; i < manyWatched; i++){
         for(j = 0; j < manyWatched - i; j++){
             if(watched[j].day < watched[j + 1].day && watched[j].month == watched[j + 1].month && watched[j].year == watched[j + 1].year){
@@ -183,7 +199,9 @@ void sortWatchedByDate(Watched *watched, int manyWatched){
             }
         }
     }
-
+    /**
+     * prints the ordered history;
+    */ 
     for(i = 0; i < manyWatched; i++){
         movie = getMovieByID(watched[i].movie_id);
         if(watched[i].user_avaliation < 0){
@@ -200,8 +218,9 @@ void sortWatchedByAvaliation(Watched *watched, int manyWatched){
     int i, j;
     Watched aux;
     Movie movie;
-
-    //sort by avaliation
+    /**
+     * sort by avaliation;
+    */
     for(i = 1; i < manyWatched; i++){
         for(j = 0; j < manyWatched - i; j++){
             if(watched[j].user_avaliation < watched[j + 1].user_avaliation){
@@ -211,7 +230,9 @@ void sortWatchedByAvaliation(Watched *watched, int manyWatched){
             }
         }
     }
-
+    /**
+     * prints the ordered history;
+    */ 
     for(i = 0; i < manyWatched; i++){
         movie = getMovieByID(watched[i].movie_id);
         if(watched[i].user_avaliation < 0){
@@ -237,6 +258,9 @@ void watchMovie(const int verbosity, const int user_id, const int movie_id) {
     watched.movie_id = movie_id;
 
     if(verbosity) printf("Digite sua nota para o filme: ");
+    /**
+     * Loop to verify if user's input is a valid entry;
+    */
     do {
         if(!isValidOption)
         {
@@ -282,6 +306,10 @@ void watchMovie(const int verbosity, const int user_id, const int movie_id) {
     free(option);
 
     if(verbosity) printf("Data de quando assistiu.\n");
+    /**
+     * loop to get the date that the user watched the movie
+     * verify if is a valid date;
+    */
     do{
         if(verbosity) printf("Digite uma data valida e no formato (dd/mm/aaaa): ");
         while(scanf("%d/%d/%d", &watched.day, &watched.month, &watched.year) != 3){
