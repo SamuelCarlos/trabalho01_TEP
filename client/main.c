@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "menu.h"
+#include "../include/main.h"
 
 /* 
 Note that "menu.h" is the library who controlls 
