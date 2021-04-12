@@ -4,7 +4,9 @@
 
 :rocket: UFLIX is an application made in C language by 2 Computer Science students from Ufes (Universidade Federal do Espírito Santo) as a "Topicos Especiais de Programação I" coursework.
 
-> [Bruno Carneiro Izoton](https://github.com/brunoizoton2001) > [Samuel Carlos Xavier de Carvalho](https://github.com/SamuelCarlos)
+> [Bruno Carneiro Izoton](https://github.com/brunoizoton2001)
+
+> [Samuel Carlos Xavier de Carvalho](https://github.com/SamuelCarlos)
 
 ## What is UFLIX:
 
@@ -14,7 +16,7 @@
 
 - :arrow_forward: **Start Menu:**
 
-  - :arrow_right: **Login:** query **users.csv** file to find an user that login matches with given "login" string. If a **users.csv** file doesn't exist, it will read the given **usuarios.csv** and create the new **users.csv** file (the difference between both, is the fact that **users.csv** will only be created once, and will add a "deleted" column at the end of each row) and try to read again. If the user is not found after the new **users.csv** has been created, it will return -1, as a response to say that user is not registered. Otherwise, if an user is found, it will return the _user_id_.
+  - :arrow*right: **Login:** query **users.csv** file to find an user that login matches with given "login" string. If a **users.csv** file doesn't exist, it will read the given **usuarios.csv** and create the new **users.csv** file (the difference between both, is the fact that **users.csv** will only be created once, and will add a "deleted" column at the end of each row) and try to read again. If the user is not found after the new **users.csv** has been created, it will return -1, as a response to say that user is not registered. Otherwise, if an user is found, it will return the \_user_id*.
     **Note:** it will check if user is deleted or not. If it finds an user with the same login but it's deleted (the last column is 1 instead of 0), it will throw an error saying that user doesn't exist.
 
   - :arrow_heading_down: **Register:** asks to user for a login, query the **users.csv** file to find if that given name matches with a existent user and it's not deleted. In this case, it will return an error. Otherwise, it will ask for a password and if it fits in the pattern (alphanumeric), the program will ask to repeat the password, compare both and validate the user register.
@@ -24,13 +26,14 @@
 
 - :abcd: **Main Menu:**
 
-  - :page_facing_up: **List Movies:** initialize a page as 0, and lists from `(page * 10) + 1` to `(page + 1) * 10`, by querying **filmes-grande.csv** file and returning each line data as an _Movie_ struct corresponding to the page (in this case will return from line 1 to line 10) and saves each _Movie_ data in an _Movie_ array because it's faster to load movie data when user select one of the 10 listed if it's in the buffer and it don't costs much memory because it's only 10 by 10.
+  - :page*facing_up: **List Movies:** initialize a page as 0, and lists from `(page * 10) + 1`to`(page + 1) _ 10`, by querying **filmes-grande.csv** file and returning each line data as an \_Movie_ struct corresponding to the page (in this case will return from line 1 to line 10) and saves each _Movie_ data in an _Movie_ array because it's faster to load movie data when user select one of the 10 listed if it's in the buffer and it don't costs much memory because it's only 10 by 10.
     User can watch one of listed movies or back to the list.
-    * Watching: ask for a avaliation from 0 to 10 (float) and for the date that user watched, returning to Main Menu at the end.
-    Creates a new line at **watched.csv** like:
-    *user_id,movie_id,avaliation,day/month/year*
-    if file doesn't exists yet, it will create a new one.
-    * Returning: return user to list where he was previously.
+
+    - Watching: ask for a avaliation from 0 to 10 (float) and for the date that user watched, returning to Main Menu at the end.
+      Creates a new line at **watched.csv** like:
+      _user_id,movie_id,avaliation,day/month/year_
+      if file doesn't exists yet, it will create a new one.
+    - Returning: return user to list where he was previously.
 
   - :bust_in_silhouette: **My Profile:** open "User Menu" (description below).
 
