@@ -309,13 +309,17 @@ void watchMovie(const int verbosity, const int user_id, const int movie_id) {
      * verify if is a valid date;
     */
     do{
+        isValidOption = 1;
         if(verbosity) printf("Digite uma data valida e no formato (dd/mm/aaaa): ");
+
         while(scanf("%d/%d/%d", &watched.day, &watched.month, &watched.year) != 3){
-            while(temp = getchar() != '\n'){};
+            while(getchar() != '\n'){};
             if(verbosity) printf("Digite uma data valida e no formato (dd/mm/aaaa): ");
         } 
-        getchar();
-    }while(!verifyValidDate(watched.day, watched.month, watched.year));
+        while(getchar() != '\n'){
+            isValidOption = 0;
+        };
+    }while(!verifyValidDate(watched.day, watched.month, watched.year) || !isValidOption);
 
     writeNewWatched(watched);
 }
