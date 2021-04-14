@@ -180,6 +180,8 @@ int signUp(const int verbosity) {
     */
     if(user.id > 0) {
         free(login);
+        free(user.login);
+        free(user.password);
         return -1;
     }
     /**

@@ -433,6 +433,7 @@ void searchMovie(const int verbosity, const int user_id) {
 
     if(verbosity) trash = system("clear");
 
+    if(i == 0) input[0] = '\0';
     matches = getMovieMatches(input, &movieCount);
 
     free(input);
@@ -474,9 +475,8 @@ void searchMovie(const int verbosity, const int user_id) {
         if(verbosity) printf("\t|-> ");
         isValidOption = 1;
 
-        while (scanf("%d", &option) != 1)
+        while (scanf(" %d", &option) != 1)
         {
-            isValidOption = 0;
             while(getchar() != '\n'){};
             if(verbosity) printf("\t|-> ");
         }
