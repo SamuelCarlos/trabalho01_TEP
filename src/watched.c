@@ -246,10 +246,7 @@ void sortWatchedByAvaliation(Watched *watched, int manyWatched){
 }
 
 void watchMovie(const int verbosity, const int user_id, const int movie_id) {
-    int isValidOption = 1, i = 0;
-    int optionSize;
-    char temp;
-    char *option;
+    int isValidOption = 1;
     Watched watched;
 
     watched.user_id = user_id;
@@ -262,46 +259,23 @@ void watchMovie(const int verbosity, const int user_id, const int movie_id) {
     do {
         if(!isValidOption)
         {
-            free(option);
             if(verbosity) printf("Digite uma opcao valida: ");
             isValidOption = 1;  
         }
 
-        optionSize = 10;
-        option = (char* ) calloc(optionSize, sizeof(char));
-        i = 0;
-        while((temp = getchar()) != '\n')
+        while(scanf("%f", &watched.user_avaliation) != 1)
         {
-            if(i <= 4) {
-                if(!isNumber(temp)) 
-                {
-                    if (temp != '.') isValidOption = 0;
+            while(getchar() != '\n') {};
+            if(verbosity) printf("Digite uma opcao valida: ");
+        }
+        while(getchar() != '\n') {
+            isValidOption = 0;
+        };
 
-                    if (i > 2) isValidOption = 0;
-                }
-
-                if((i + 1) == optionSize) 
-                {
-                    optionSize *= 2;
-                    option = (char* ) realloc(option, optionSize * sizeof(char));
-                }
-
-                option[i] = temp;
-                option[i + 1] = '\0';
-                i++;
-
-                if(isValidOption && atof(option) > 10) isValidOption = 0;
-            }
+        if(watched.user_avaliation < 0 || watched.user_avaliation > 10) {
+            if(watched.user_avaliation != -1) isValidOption = 0;
         }
     } while(!isValidOption);
-
-    if(i == 0) {
-        watched.user_avaliation = -1;
-    }else{
-        watched.user_avaliation = atof(option);
-    }
-
-    free(option);
 
     if(verbosity) printf("Data de quando assistiu.\n");
     /**
