@@ -8,7 +8,7 @@
  * first menu seen by the user, ask for login or logon.
 */
 void startMenu(const int verbosity){
-    int response, i;
+    int response = -5, i;
     int verificator = 1;
     int isValidInformation;
     int trash;
@@ -110,7 +110,9 @@ void startMenu(const int verbosity){
     /**
     * Creates a new Usuarios file at the end of the application
     */
-    createUsuariosFile();
+    if(response != -5){
+        createUsuariosFile();
+    }
 }
 
 void mainMenu(const int verbosity, const int user_id) {
