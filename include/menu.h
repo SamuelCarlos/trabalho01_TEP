@@ -1,14 +1,6 @@
 #ifndef MENU_H
 #define MENU_H
-/*
-All functions below are just to organize the menus to keep the
-code as clean as possible;
 
-Note that the only arguments passed through menus in our program
-is the "user_id", because we just need this credential to validate
-all logged user actions, and "verbosity", to print user-friendly
-menus.
-*/
 
 /*
 @brief once user is logged through "startMenu", he will be
